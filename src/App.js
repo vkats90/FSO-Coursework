@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import AnecdoteForm from './components/AnecdoteForm'
+import Notification from './components/Notification'
 
-function App() {
+const App = () => {
+
+  const handleVote = (anecdote) => {
+    console.log('vote')
+  }
+
+  const anecdotes = [
+    {
+      "content": "If it hurts, do it more often",
+      "id": "47145",
+      "votes": 0
+    },
+  ]
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h2>Anecdotes</h2>
+      <Notification />
+
+      {anecdotes.map(anecdote =>
+        <div key={anecdote.id}>
+          <div>
+            {anecdote.content}
+          </div>
+          <div>
+            has {anecdote.votes}
+            <button onClick={() => handleVote(anecdote)}>vote</button>
+          </div>
+        </div>
+      )}
+
+      <AnecdoteForm />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
