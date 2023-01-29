@@ -19,7 +19,8 @@ const App = () => {
     <div>
       <h2>Anecdotes</h2>
       <Notification />
-
+      <AnecdoteForm />
+    
       {anecdotes.map(anecdote =>
         <div key={anecdote.id}>
           <div>
@@ -31,8 +32,6 @@ const App = () => {
           </div>
         </div>
       )}
-
-      <AnecdoteForm />
     </div>
   )
 }
