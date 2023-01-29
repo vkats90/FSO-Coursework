@@ -17,7 +17,8 @@ const App = () => {
 
   return (
     <div>
-      <h2>Anecdotes</h2>
+      <h3>Anecdote app</h3>
+    
       <Notification />
       <AnecdoteForm />
     
