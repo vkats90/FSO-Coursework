@@ -1,9 +1,10 @@
 import { useState } from "react";
 
 const StatisticLine = ({ value, text }) => (
-  <p>
-    {text} votes: {value}
-  </p>
+  <>
+    <td>{text} votes</td>
+    <td>{value}</td>
+  </>
 );
 
 const Button = ({ handleClick, text }) => {
@@ -12,20 +13,32 @@ const Button = ({ handleClick, text }) => {
 
 const Statistics = ({ good, neutral, bad }) => {
   return good + bad + neutral ? (
-    <div>
-      <StatisticLine value={good} text="Good" />
-      <StatisticLine value={neutral} text="Neutral" />
-      <StatisticLine value={bad} text="Bad" />
-      <StatisticLine value={good + neutral + bad} text="All" />
-      <StatisticLine
-        value={(good - bad) / (good + bad + neutral) || 0}
-        text="Average"
-      />
-      <StatisticLine
-        value={((good * 100) / (good + bad + neutral) || 0) + "%"}
-        text="Positive"
-      />
-    </div>
+    <table>
+      <tr>
+        <StatisticLine value={good} text="Good" />
+      </tr>
+      <tr>
+        <StatisticLine value={neutral} text="Neutral" />
+      </tr>
+      <tr>
+        <StatisticLine value={bad} text="Bad" />
+      </tr>
+      <tr>
+        <StatisticLine value={good + neutral + bad} text="All" />
+      </tr>
+      <tr>
+        <StatisticLine
+          value={(good - bad) / (good + bad + neutral) || 0}
+          text="Average"
+        />
+      </tr>
+      <tr>
+        <StatisticLine
+          value={((good * 100) / (good + bad + neutral) || 0) + "%"}
+          text="Positive"
+        />
+      </tr>
+    </table>
   ) : (
     <p>No feedback yet!</p>
   );
