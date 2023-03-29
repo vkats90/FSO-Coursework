@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-const Display = ({ val, text }) => (
+const StatisticLine = ({ value, text }) => (
   <p>
-    {text} votes: {val}
+    {text} votes: {value}
   </p>
 );
 
@@ -13,16 +13,16 @@ const Button = ({ handleClick, text }) => {
 const Statistics = ({ good, neutral, bad }) => {
   return good + bad + neutral ? (
     <div>
-      <Display val={good} text="Good" />
-      <Display val={neutral} text="Neutral" />
-      <Display val={bad} text="Bad" />
-      <Display val={good + neutral + bad} text="All" />
-      <Display
-        val={(good - bad) / (good + bad + neutral) || 0}
+      <StatisticLine value={good} text="Good" />
+      <StatisticLine value={neutral} text="Neutral" />
+      <StatisticLine value={bad} text="Bad" />
+      <StatisticLine value={good + neutral + bad} text="All" />
+      <StatisticLine
+        value={(good - bad) / (good + bad + neutral) || 0}
         text="Average"
       />
-      <Display
-        val={((good * 100) / (good + bad + neutral) || 0) + "%"}
+      <StatisticLine
+        value={((good * 100) / (good + bad + neutral) || 0) + "%"}
         text="Positive"
       />
     </div>
