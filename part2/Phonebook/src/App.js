@@ -10,7 +10,10 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setPersons(persons.concat({ name: newName }));
+    console.log(persons.filter((person) => person.name === newName));
+    persons.filter((person) => person.name === newName).length !== 0
+      ? alert(`${newName} is already in the phonebook`)
+      : setPersons(persons.concat({ name: newName }));
     setNewName("");
   };
 
