@@ -30,14 +30,20 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    //checking if fields are empty
     if (!newNumber || !newName) {
       alert("Input both name and number");
+      //checking if the name is already there
     } else if (
       persons.filter((person) => person.name === newName).length !== 0
     ) {
       alert(`${newName} is already in the phonebook`);
     } else {
       setPersons(persons.concat({ name: newName, number: newNumber }));
+      axios.post("http://localhost:3001/persons", {
+        name: newName,
+        number: newNumber,
+      });
       setNewName("");
       setNewNumber("");
     }
