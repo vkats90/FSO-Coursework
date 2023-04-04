@@ -38,7 +38,17 @@ const App = () => {
     } else if (
       persons.filter((person) => person.name === newName).length !== 0
     ) {
-      alert(`${newName} is already in the phonebook`);
+      if (
+        window.confirm(
+          `${newName} is already in the phonebook, replace old number with the new one?`
+        )
+      ) {
+        serverServices.replaceNumber(
+          persons.find((person) => person.name === newName).id,
+          newName,
+          newNumber
+        );
+      }
     } else {
       setPersons(persons.concat({ name: newName, number: newNumber }));
       serverServices.addNumber(newName, newNumber);

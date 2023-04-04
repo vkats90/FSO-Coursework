@@ -19,5 +19,15 @@ const deleteNumber = (id) => {
     .catch((error) => alert("This number has already been deleted"));
 };
 
-let serverServices = { getAll, addNumber, deleteNumber };
+const replaceNumber = (id, name, number) => {
+  return axios
+    .put(`http://localhost:3001/persons/${id}`, { name, number })
+    .then((response) => response.data)
+    .catch((error) => {
+      console.log("added a new number");
+      addNumber(name, number);
+    });
+};
+
+let serverServices = { getAll, addNumber, deleteNumber, replaceNumber };
 export default serverServices;
