@@ -12,21 +12,20 @@ const addNumber = (name, number) => {
     .then((response) => response.data);
 };
 
-const deleteNumber = (id) => {
+const deleteNumber = (person) => {
   return axios
-    .delete(`http://localhost:3001/persons/${id}`)
+    .delete(`http://localhost:3001/persons/${person.id}`)
     .then((response) => response.data)
-    .catch((error) => alert("This number has already been deleted"));
+    .catch((error) => {
+      alert(`${person.name}'s number has already been deleted`);
+    });
 };
 
 const replaceNumber = (id, name, number) => {
   return axios
     .put(`http://localhost:3001/persons/${id}`, { name, number })
-    .then((response) => response.data)
-    .catch((error) => {
-      console.log("added a new number");
-      addNumber(name, number);
-    });
+    .then((response) => response.data);
+  //.catch((error) => {addNumber(name, number)});
 };
 
 let serverServices = { getAll, addNumber, deleteNumber, replaceNumber };
