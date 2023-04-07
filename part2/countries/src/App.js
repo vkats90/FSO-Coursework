@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import getAll from "./services/server";
+import serverServices from "./services/server";
 import CountryDisplay from "./components/CountryDisplay";
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
   const [countryInfo, setCountryInfo] = useState();
 
   useEffect(() => {
-    getAll().then((data) => {
+    serverServices.getAll().then((data) => {
       let searchResult = data.filter((x) =>
         RegExp(country, "gi").test(x.name.common)
       );
