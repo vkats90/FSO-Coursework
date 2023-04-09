@@ -3,6 +3,16 @@ const app = express();
 
 app.use(express.json());
 
+const requestLogger = (request, response, next) => {
+  console.log("Method:", request.method);
+  console.log("Path:  ", request.path);
+  console.log("Body:  ", request.body);
+  console.log("---");
+  next();
+};
+
+app.use(requestLogger);
+
 let notes = [
   {
     id: 1,
@@ -51,6 +61,7 @@ const generateId = () => {
 };
 
 app.post("/api/notes", (request, response) => {
+  const body = request.body;
   if (!body.content) {
     return response.status(400).json({
       error: "content missing",
@@ -67,6 +78,12 @@ app.post("/api/notes", (request, response) => {
 
   response.json(note);
 });
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
 
 const PORT = 3001;
 app.listen(PORT);
