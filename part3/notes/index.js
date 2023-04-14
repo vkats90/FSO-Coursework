@@ -18,6 +18,16 @@ const requestLogger = (request, response, next) => {
   next();
 };
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
 app.use(requestLogger);
 
 app.get("/api/notes", (request, response) => {
@@ -26,24 +36,33 @@ app.get("/api/notes", (request, response) => {
   });
 });
 
-app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>");
-});
-
 app.get("/api/notes", (request, response) => {
   response.json(notes);
 });
 
-app.get("/api/notes/:id", (request, response) => {
+app.get("/api/notes/:id", (request, response, next) => {
   const id = request.params.id;
-  Note.findById(id).then((res) => {
-    response.json(res);
-  });
+  Note.findById(id)
+    .then((res) => {
+      if (res) {
+        response.json(res);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
-app.delete("/api/notes/:id", (request, response) => {
-  const id = Number(request.params.id);
-  notes = notes.filter((note) => note.id !== id);
+app.delete("/api/notes/:id", async (request, response) => {
+  const id = request.params.id;
+  try {
+    console.log(id);
+    let res = await Note.findByIdAndRemove(id);
+    console.log(res);
+    response(204).end();
+  } catch (err) {
+    next(err);
+  }
 
   response.status(204).end();
 });
@@ -66,11 +85,23 @@ app.post("/api/notes", (request, response) => {
   });
 });
 
+app.put("/api/notes/:id", async (request, response, next) => {
+  let id = request.params.id;
+  newNote = request.body;
+  try {
+    let note = await Note.findByIdAndUpdate(id, newNote, { new: true });
+    response.json(note);
+  } catch (err) {
+    next(err);
+  }
+});
+
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: "unknown endpoint" });
 };
 
 app.use(unknownEndpoint);
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT);
