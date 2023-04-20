@@ -97,7 +97,7 @@ describe("most likes", () => {
   });
 });
 
-describe("author with most likes", () => {
+describe("author with most blogs", () => {
   test("of an empty list is zero", () => {
     expect(listHelper.mostBlogs([])).toBe(0);
   });
@@ -111,6 +111,24 @@ describe("author with most likes", () => {
     expect(listHelper.mostBlogs(blogs)).toEqual({
       author: "Robert C. Martin",
       blogs: 3,
+    });
+  });
+});
+
+describe("author with most likes", () => {
+  test("of an empty list is zero", () => {
+    expect(listHelper.mostLikes([])).toBe(0);
+  });
+  test("of a list that has only one blog, equals the author of that blog", () => {
+    expect(listHelper.mostLikes(listWithOneBlog)).toEqual({
+      author: "Edsger W. Dijkstra",
+      likes: 5,
+    });
+  });
+  test("of a bigger list is shown right", () => {
+    expect(listHelper.mostLikes(blogs)).toEqual({
+      author: "Edsger W. Dijkstra",
+      likes: 17,
     });
   });
 });
