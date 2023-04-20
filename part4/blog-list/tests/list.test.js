@@ -119,7 +119,7 @@ describe("author with most likes", () => {
   test("of an empty list is zero", () => {
     expect(listHelper.mostLikes([])).toBe(0);
   });
-  test("of a list that has only one blog, equals the author of that blog", () => {
+  test("of a list that has only one blog, equals the likes of that author", () => {
     expect(listHelper.mostLikes(listWithOneBlog)).toEqual({
       author: "Edsger W. Dijkstra",
       likes: 5,
