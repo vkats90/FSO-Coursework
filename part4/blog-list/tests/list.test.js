@@ -96,3 +96,21 @@ describe("most likes", () => {
     expect(listHelper.favouriteBlog(blogs)).toEqual(blogs[2]);
   });
 });
+
+describe("author with most likes", () => {
+  test("of an empty list is zero", () => {
+    expect(listHelper.mostBlogs([])).toBe(0);
+  });
+  test("of a list that has only one blog, equals the author of that blog", () => {
+    expect(listHelper.mostBlogs(listWithOneBlog)).toEqual({
+      author: "Edsger W. Dijkstra",
+      blogs: 1,
+    });
+  });
+  test("of a bigger list is shown right", () => {
+    expect(listHelper.mostBlogs(blogs)).toEqual({
+      author: "Robert C. Martin",
+      blogs: 3,
+    });
+  });
+});
