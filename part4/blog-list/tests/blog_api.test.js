@@ -64,7 +64,7 @@ describe("testing POST", () => {
     title: "Papa's new Mercedes",
     author: "Vengeful wife",
     url: "I made it up",
-    likes: 0,
+    likes: 12,
   };
 
   test("check that I can submit a post request", async () => {
@@ -88,6 +88,22 @@ describe("testing POST", () => {
     const blogs = await api.get("/api/blogs");
     blogs.body.map((x) => (x.id = undefined));
     expect(blogs.body).toContainEqual(newBlog);
+  });
+
+  test("check a note without likes defaults to zero", async () => {
+    let zeroLikesBlog = {
+      title: "My Recipe Book",
+      author: "Makenzie Carr",
+      url: "http",
+    };
+    console.log(zeroLikesBlog);
+    await api.post("/api/blogs").send(zeroLikesBlog);
+
+    const response = await api.get("/api/blogs");
+    console.log(response.body);
+    const post = response.body.filter((x) => x.title === zeroLikesBlog.title);
+    console.log(post);
+    expect(post[0].likes).toBe(0);
   });
 });
 
