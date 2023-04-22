@@ -29,35 +29,68 @@ beforeEach(async () => {
 });
 
 describe("testing GET", () => {
-  test("server returns notes", async () => {
+  test("server returns blogs", async () => {
     await api
       .get("/api/blogs")
       .expect(200)
       .expect("Content-Type", /application\/json/);
   });
 
-  test("returned notes are of the right length", async () => {
-    const notes = await api.get("/api/blogs");
+  test("returned blogs are of the right length", async () => {
+    const blogs = await api.get("/api/blogs");
 
-    expect(notes.body).toHaveLength(innitialBlog.length);
+    expect(blogs.body).toHaveLength(innitialBlog.length);
   });
 
-  test("expect returned notes to include a certain note", async () => {
-    const notes = await api.get("/api/blogs");
+  test("expect returned blogs to include a certain note", async () => {
+    const blogs = await api.get("/api/blogs");
 
-    notes.body.map((x) => (x.id = undefined));
-    expect(notes.body).toContainEqual(innitialBlog[0]);
+    blogs.body.map((x) => (x.id = undefined));
+    expect(blogs.body).toContainEqual(innitialBlog[0]);
   });
 
-  test("returned notes include an id property", async () => {
-    const notes = await api.get("/api/blogs");
+  test("returned blogs include an id property", async () => {
+    const blogs = await api.get("/api/blogs");
 
-    notes.body.map((x) => {
+    blogs.body.map((x) => {
       expect(x.id).toBeDefined;
       expect(x._id).not.toBeDefined;
     });
   });
 });
+
+describe("testing POST", () => {
+  let newBlog = {
+    title: "Papa's new Mercedes",
+    author: "Vengeful wife",
+    url: "I made it up",
+    likes: 0,
+  };
+
+  test("check that I can submit a post request", async () => {
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+  });
+
+  test("expect new length to be 1 higher than before", async () => {
+    await api.post("/api/blogs").send(newBlog);
+
+    const blogs = await api.get("/api/blogs");
+    expect(blogs.body).toHaveLength(innitialBlog.length + 1);
+  });
+
+  test("check that the new note is included in the database", async () => {
+    await api.post("/api/blogs").send(newBlog);
+
+    const blogs = await api.get("/api/blogs");
+    blogs.body.map((x) => (x.id = undefined));
+    expect(blogs.body).toContainEqual(newBlog);
+  });
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });
