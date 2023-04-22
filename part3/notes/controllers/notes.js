@@ -1,25 +1,23 @@
+// express-async-error library is used here to eliminate the "catch" functions
+
 const notesRouter = require("express").Router();
 const Note = require("../models/note");
 
-notesRouter.get("/", (request, response) => {
-  Note.find({}).then((notes) => {
-    response.json(notes);
-  });
+notesRouter.get("/", async (request, response) => {
+  const notes = await Note.find({});
+  response.json(notes);
 });
 
-notesRouter.get("/:id", (request, response, next) => {
-  Note.findById(request.params.id)
-    .then((note) => {
-      if (note) {
-        response.json(note);
-      } else {
-        response.status(404).end();
-      }
-    })
-    .catch((error) => next(error));
+notesRouter.get("/:id", async (request, response) => {
+  const note = await Note.findById(request.params.id);
+  if (note) {
+    response.json(note);
+  } else {
+    response.status(404).end();
+  }
 });
 
-notesRouter.post("/", (request, response, next) => {
+notesRouter.post("/", async (request, response) => {
   const body = request.body;
 
   const note = new Note({
@@ -27,39 +25,24 @@ notesRouter.post("/", (request, response, next) => {
     important: body.important || false,
   });
 
-  note
-    .save()
-    .then((savedNote) => {
-      response.json(savedNote);
-    })
-    .catch((error) => next(error));
+  const savedNote = await note.save();
+  response.status(201).json(savedNote);
 });
 
 notesRouter.delete("/:id", async (request, response) => {
-  const id = request.params.id;
-  try {
-    console.log(id);
-    let res = await Note.findByIdAndRemove(id);
-    console.log(res);
-    response(204).end();
-  } catch (err) {
-    next(err);
-  }
+  await Note.findByIdAndRemove(request.params.id);
+  response.status(204).end();
 });
 
 notesRouter.put("/:id", async (request, response, next) => {
   let id = request.params.id;
   const { content, important } = request.body;
-  try {
-    let note = await Note.findByIdAndUpdate(
-      id,
-      { content, important },
-      { new: true, runValidators: true, context: "query" }
-    );
-    response.json(note);
-  } catch (err) {
-    next(err);
-  }
+  let note = await Note.findByIdAndUpdate(
+    id,
+    { content, important },
+    { new: true, runValidators: true, context: "query" }
+  );
+  response.json(note);
 });
 
 module.exports = notesRouter;
