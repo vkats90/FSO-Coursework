@@ -41,14 +41,23 @@ describe("testing GET", () => {
 
     expect(notes.body).toHaveLength(innitialBlog.length);
   });
+
+  test("expect returned notes to include a certain note", async () => {
+    const notes = await api.get("/api/blogs");
+
+    notes.body.map((x) => (x.id = undefined));
+    expect(notes.body).toContainEqual(innitialBlog[0]);
+  });
+
+  test("returned notes include an id property", async () => {
+    const notes = await api.get("/api/blogs");
+
+    notes.body.map((x) => {
+      expect(x.id).toBeDefined;
+      expect(x._id).not.toBeDefined;
+    });
+  });
 });
-
-test("expect returns notes to include a certain note", async () => {
-  const notes = await api.get("/api/blogs");
-
-  expect(notes.body).toContainEqual(innitialBlog[0]);
-});
-
 afterAll(async () => {
   await mongoose.connection.close();
 });
