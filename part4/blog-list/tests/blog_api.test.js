@@ -89,7 +89,9 @@ describe("testing POST", () => {
     blogs.body.map((x) => (x.id = undefined));
     expect(blogs.body).toContainEqual(newBlog);
   });
+});
 
+describe("testing POST with missing fields", () => {
   test("check a note without likes defaults to zero", async () => {
     let zeroLikesBlog = {
       title: "My Recipe Book",
@@ -100,10 +102,47 @@ describe("testing POST", () => {
     await api.post("/api/blogs").send(zeroLikesBlog);
 
     const response = await api.get("/api/blogs");
-    console.log(response.body);
     const post = response.body.filter((x) => x.title === zeroLikesBlog.title);
-    console.log(post);
     expect(post[0].likes).toBe(0);
+  });
+
+  test("check a note without a title returns a bad request", async () => {
+    let noTitleBlog = {
+      author: "Makenzie Carr",
+      url: "http",
+      likes: 2,
+    };
+
+    const response = await api.post("/api/blogs").send(noTitleBlog).expect(400);
+
+    expect(response.body.error).toBe(
+      "Blog validation failed: title: Blog title is required"
+    );
+  });
+  test("check a note without a url returns a bad request", async () => {
+    let noURLBlog = {
+      title: "My Recipe Book",
+      author: "Makenzie Carr",
+      likes: 2,
+    };
+
+    const response = await api.post("/api/blogs").send(noURLBlog).expect(400);
+
+    expect(response.body.error).toBe(
+      "Blog validation failed: url: URL is required"
+    );
+  });
+  test("check a note without a url and a title returns a bad request", async () => {
+    let badBlog = {
+      author: "Makenzie Carr",
+      likes: 2,
+    };
+
+    const response = await api.post("/api/blogs").send(badBlog).expect(400);
+
+    expect(response.body.error).toBe(
+      "Blog validation failed: url: URL is required, title: Blog title is required"
+    );
   });
 });
 
