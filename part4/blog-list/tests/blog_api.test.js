@@ -146,6 +146,88 @@ describe("testing POST with missing fields", () => {
   });
 });
 
+describe("testing the DELETE call", () => {
+  test("sumbitting a delete request works", async () => {
+    let blogs = await api.get("/api/blogs");
+
+    await api.delete(`/api/blogs/${blogs.body[0].id}`).expect(204);
+  });
+
+  test("after deleting the length on blogs is lower by 1", async () => {
+    let blogs = await api.get("/api/blogs");
+    let length = blogs.body.length;
+
+    await api.delete(`/api/blogs/${blogs.body[0].id}`);
+    blogs = await api.get("/api/blogs");
+    expect(blogs.body).toHaveLength(length - 1);
+  });
+
+  test("after deleting the note is missing from blogs", async () => {
+    let blogs = await api.get("/api/blogs");
+    let chosenBlog = blogs.body[0];
+
+    await api.delete(`/api/blogs/${blogs.body[0].id}`);
+    blogs = await api.get("/api/blogs");
+    expect(blogs.body).not.toContainEqual(chosenBlog);
+  });
+
+  test("sumbitting a delete to a bad id returns an error", async () => {
+    const response = await api
+      .delete(`/api/blogs/6445e1150b5c1e38e25a7d3f`)
+      .expect(400);
+
+    expect(response.body.error).toBe("blog with this id does not exist");
+  });
+});
+
+describe("testing PUT functionality", () => {
+  test("can submit a put request", async () => {
+    const blogs = await api.get("/api/blogs");
+    let updatedBlog = {
+      title: "My Recipe Book",
+      author: "Makenzie Carr",
+      url: "http",
+      likes: 420,
+    };
+    await api
+      .put(`/api/blogs/${blogs.body[0].id}`)
+      .send(updatedBlog)
+      .expect(200);
+  });
+
+  test("after submitting a put request the note is updated", async () => {
+    let blogs = await api.get("/api/blogs");
+    let updatedBlog = {
+      title: "My Recipe Book",
+      author: "Makenzie Carr",
+      url: "http",
+      likes: 420,
+    };
+    const response = await api
+      .put(`/api/blogs/${blogs.body[0].id}`)
+      .send(updatedBlog);
+
+    response.body.id = undefined;
+    expect(response.body).toEqual(updatedBlog);
+    blogs = await api.get("/api/blogs");
+    blogs.body[0].id = undefined;
+    expect(blogs.body[0]).toEqual(updatedBlog);
+  }, 10000);
+
+  test("a put request with a bad id returns an error", async () => {
+    let updatedBlog = {
+      title: "My Recipe Book",
+      author: "Makenzie Carr",
+      url: "http",
+      likes: 420,
+    };
+    await api
+      .put(`/api/blogs/643dfb4174f3bd2d54333da`)
+      .send(updatedBlog)
+      .expect(400);
+  });
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });
