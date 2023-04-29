@@ -15,15 +15,8 @@ blogRouter.get("/", async (request, response, next) => {
   }
 });
 
-const getToken = (req) => {
-  const auth = req.get("authorization");
-  if (auth && auth.startsWith("bearer ")) {
-    return auth.replace("bearer ", "");
-  }
-};
-
 blogRouter.post("/", async (request, response, next) => {
-  const checkToken = jwt.verify(getToken(request), process.env.SECRET);
+  const checkToken = jwt.verify(request.token, process.env.SECRET);
   if (!checkToken) {
     return res.status(401).json({ error: "invalid token" });
   }
@@ -35,8 +28,7 @@ blogRouter.post("/", async (request, response, next) => {
 
   try {
     const result = await blog.save();
-    user.blogs.push(user.id);
-    console.log(user);
+    user.blogs.push(result.id);
     await user.save();
     response.status(201).json(result);
   } catch (error) {
