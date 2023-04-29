@@ -1,6 +1,7 @@
 const blogRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 
 blogRouter.get("/", async (request, response, next) => {
   try {
@@ -14,18 +15,27 @@ blogRouter.get("/", async (request, response, next) => {
   }
 });
 
-blogRouter.post("/", async (request, response, next) => {
-  const blog = new Blog(request.body);
-  if (!blog.user) {
-    let users = await User.find({});
-    let random = Math.floor(Math.random() * users.length);
-    blog.user = users[random].id;
+const getToken = (req) => {
+  const auth = req.get("authorization");
+  if (auth && auth.startsWith("bearer ")) {
+    return auth.replace("bearer ", "");
   }
+};
+
+blogRouter.post("/", async (request, response, next) => {
+  const checkToken = jwt.verify(getToken(request), process.env.SECRET);
+  if (!checkToken) {
+    return res.status(401).json({ error: "invalid token" });
+  }
+
+  const user = await User.findById(checkToken.id);
+
+  const blog = new Blog(request.body);
+  blog.user = user.id;
 
   try {
     const result = await blog.save();
-    const user = await User.findById(result.user);
-    user.blogs.push(result.id);
+    user.blogs.push(user.id);
     console.log(user);
     await user.save();
     response.status(201).json(result);
