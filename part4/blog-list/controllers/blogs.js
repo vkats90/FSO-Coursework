@@ -1,7 +1,6 @@
 const blogRouter = require("express").Router();
 const Blog = require("../models/blog");
-const User = require("../models/user");
-const jwt = require("jsonwebtoken");
+const { userExtract } = require("../utils/middleware");
 
 blogRouter.get("/", async (request, response, next) => {
   try {
@@ -15,13 +14,8 @@ blogRouter.get("/", async (request, response, next) => {
   }
 });
 
-blogRouter.post("/", async (request, response, next) => {
-  const checkToken = jwt.verify(request.token, process.env.SECRET);
-  if (!checkToken) {
-    return res.status(401).json({ error: "invalid token" });
-  }
-
-  const user = await User.findById(checkToken.id);
+blogRouter.post("/", userExtract, async (request, response, next) => {
+  const user = request.user;
 
   const blog = new Blog(request.body);
   blog.user = user.id;
@@ -36,15 +30,9 @@ blogRouter.post("/", async (request, response, next) => {
   }
 });
 
-blogRouter.delete("/:id", async (request, response, next) => {
-  const checkToken = jwt.verify(request.token, process.env.SECRET);
-  if (!checkToken) {
-    return res.status(401).json({ error: "invalid token" });
-  }
-
-  const user = await User.findById(checkToken.id);
-
+blogRouter.delete("/:id", userExtract, async (request, response, next) => {
   try {
+    const user = request.user;
     const blog = await Blog.findById(request.params.id);
     if (!blog) {
       return response
@@ -63,10 +51,17 @@ blogRouter.delete("/:id", async (request, response, next) => {
   }
 });
 
-blogRouter.put("/:id", async (request, response, next) => {
+blogRouter.put("/:id", userExtract, async (request, response, next) => {
   try {
+    const user = request.user;
+    let blog = await Blog.findById(request.params.id);
+    if (blog.user.toString() !== user.id.toString()) {
+      return response
+        .status(401)
+        .json({ error: "unauthorized, you did not create this blog" });
+    }
     const { title, author, url, likes } = request.body;
-    const blog = await Blog.findByIdAndUpdate(
+    blog = await Blog.findByIdAndUpdate(
       request.params.id,
       { title, author, url, likes },
       {
