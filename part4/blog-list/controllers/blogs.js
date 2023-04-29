@@ -37,15 +37,27 @@ blogRouter.post("/", async (request, response, next) => {
 });
 
 blogRouter.delete("/:id", async (request, response, next) => {
+  const checkToken = jwt.verify(request.token, process.env.SECRET);
+  if (!checkToken) {
+    return res.status(401).json({ error: "invalid token" });
+  }
+
+  const user = await User.findById(checkToken.id);
+
   try {
     const blog = await Blog.findById(request.params.id);
-    if (blog) {
-      await Blog.findByIdAndRemove(request.params.id);
-      response
-        .status(204)
-        .json({ success: `Blog ${request.params.id} removed` });
-    } else
-      response.status(400).json({ error: "blog with this id does not exist" });
+    if (!blog) {
+      return response
+        .status(400)
+        .json({ error: "blog with this id does not exist" });
+    }
+    if (blog.user.toString() !== user.id.toString()) {
+      return response
+        .status(401)
+        .json({ error: "unauthorized, you did not create this blog" });
+    }
+    await Blog.findByIdAndRemove(request.params.id);
+    response.status(204).json({ success: `Blog ${request.params.id} removed` });
   } catch (error) {
     next(error);
   }
