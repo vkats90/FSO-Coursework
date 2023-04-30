@@ -3,6 +3,7 @@ const supertest = require("supertest");
 const app = require("../app");
 const api = supertest(app);
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 const innitialBlog = [
   {
@@ -19,10 +20,31 @@ const innitialBlog = [
   },
 ];
 
+let token = "";
+let initUser;
+
+beforeAll(async () => {
+  await User.deleteMany({});
+  const innitialUser = {
+    username: "marsimillian77",
+    name: "vlad",
+    password: "123456",
+  };
+  initUser = await api.post("/api/users").send(innitialUser);
+  initUser = initUser.body;
+
+  const authUser = await api
+    .post("/api/login")
+    .send({ username: "marsimillian77", password: "123456" });
+  token = "bearer " + authUser.body.token;
+  console.log("TOKEN:", token);
+});
+
 beforeEach(async () => {
   await Blog.deleteMany({});
 
   for (let x of innitialBlog) {
+    x.user = initUser.id;
     let blog = new Blog(x);
     await blog.save();
   }
@@ -45,8 +67,12 @@ describe("testing GET", () => {
   test("expect returned blogs to include a certain note", async () => {
     const blogs = await api.get("/api/blogs");
 
-    blogs.body.map((x) => (x.id = undefined));
-    expect(blogs.body).toContainEqual(innitialBlog[0]);
+    blogs.body.map((x) => {
+      x.id = undefined;
+      x.user = undefined;
+    });
+    const blog = { ...innitialBlog[0], user: undefined };
+    expect(blogs.body).toContainEqual(blog);
   });
 
   test("returned blogs include an id property", async () => {
@@ -67,26 +93,36 @@ describe("testing POST", () => {
     likes: 12,
   };
 
+  test("when not providing the auth token the server returns a 401", async () => {
+    let response = await api.post("/api/blogs").send(newBlog).expect(401);
+
+    expect(response.body.error).toBe("jwt must be provided");
+  });
+
   test("check that I can submit a post request", async () => {
     await api
       .post("/api/blogs")
       .send(newBlog)
+      .set({ authorization: token })
       .expect(201)
       .expect("Content-Type", /application\/json/);
   });
 
   test("expect new length to be 1 higher than before", async () => {
-    await api.post("/api/blogs").send(newBlog);
+    await api.post("/api/blogs").send(newBlog).set({ authorization: token });
 
     const blogs = await api.get("/api/blogs");
     expect(blogs.body).toHaveLength(innitialBlog.length + 1);
   });
 
   test("check that the new note is included in the database", async () => {
-    await api.post("/api/blogs").send(newBlog);
+    await api.post("/api/blogs").send(newBlog).set({ authorization: token });
 
     const blogs = await api.get("/api/blogs");
-    blogs.body.map((x) => (x.id = undefined));
+    blogs.body.map((x) => {
+      x.id = undefined;
+      x.user = undefined;
+    });
     expect(blogs.body).toContainEqual(newBlog);
   });
 });
@@ -98,8 +134,10 @@ describe("testing POST with missing fields", () => {
       author: "Makenzie Carr",
       url: "http",
     };
-    console.log(zeroLikesBlog);
-    await api.post("/api/blogs").send(zeroLikesBlog);
+    await api
+      .post("/api/blogs")
+      .send(zeroLikesBlog)
+      .set({ authorization: token });
 
     const response = await api.get("/api/blogs");
     const post = response.body.filter((x) => x.title === zeroLikesBlog.title);
@@ -113,7 +151,11 @@ describe("testing POST with missing fields", () => {
       likes: 2,
     };
 
-    const response = await api.post("/api/blogs").send(noTitleBlog).expect(400);
+    const response = await api
+      .post("/api/blogs")
+      .send(noTitleBlog)
+      .expect(400)
+      .set({ authorization: token });
 
     expect(response.body.error).toBe(
       "Blog validation failed: title: Blog title is required"
@@ -126,7 +168,11 @@ describe("testing POST with missing fields", () => {
       likes: 2,
     };
 
-    const response = await api.post("/api/blogs").send(noURLBlog).expect(400);
+    const response = await api
+      .post("/api/blogs")
+      .send(noURLBlog)
+      .set({ authorization: token })
+      .expect(400);
 
     expect(response.body.error).toBe(
       "Blog validation failed: url: URL is required"
@@ -138,7 +184,11 @@ describe("testing POST with missing fields", () => {
       likes: 2,
     };
 
-    const response = await api.post("/api/blogs").send(badBlog).expect(400);
+    const response = await api
+      .post("/api/blogs")
+      .send(badBlog)
+      .set({ authorization: token })
+      .expect(400);
 
     expect(response.body.error).toBe(
       "Blog validation failed: url: URL is required, title: Blog title is required"
@@ -150,14 +200,19 @@ describe("testing the DELETE call", () => {
   test("sumbitting a delete request works", async () => {
     let blogs = await api.get("/api/blogs");
 
-    await api.delete(`/api/blogs/${blogs.body[0].id}`).expect(204);
+    await api
+      .delete(`/api/blogs/${blogs.body[0].id}`)
+      .set({ authorization: token })
+      .expect(204);
   });
 
   test("after deleting the length on blogs is lower by 1", async () => {
     let blogs = await api.get("/api/blogs");
     let length = blogs.body.length;
 
-    await api.delete(`/api/blogs/${blogs.body[0].id}`);
+    await api
+      .delete(`/api/blogs/${blogs.body[0].id}`)
+      .set({ authorization: token });
     blogs = await api.get("/api/blogs");
     expect(blogs.body).toHaveLength(length - 1);
   });
@@ -166,7 +221,9 @@ describe("testing the DELETE call", () => {
     let blogs = await api.get("/api/blogs");
     let chosenBlog = blogs.body[0];
 
-    await api.delete(`/api/blogs/${blogs.body[0].id}`);
+    await api
+      .delete(`/api/blogs/${blogs.body[0].id}`)
+      .set({ authorization: token });
     blogs = await api.get("/api/blogs");
     expect(blogs.body).not.toContainEqual(chosenBlog);
   });
@@ -174,6 +231,7 @@ describe("testing the DELETE call", () => {
   test("sumbitting a delete to a bad id returns an error", async () => {
     const response = await api
       .delete(`/api/blogs/6445e1150b5c1e38e25a7d3f`)
+      .set({ authorization: token })
       .expect(400);
 
     expect(response.body.error).toBe("blog with this id does not exist");
@@ -192,6 +250,7 @@ describe("testing PUT functionality", () => {
     await api
       .put(`/api/blogs/${blogs.body[0].id}`)
       .send(updatedBlog)
+      .set({ authorization: token })
       .expect(200);
   });
 
@@ -205,12 +264,15 @@ describe("testing PUT functionality", () => {
     };
     const response = await api
       .put(`/api/blogs/${blogs.body[0].id}`)
+      .set({ authorization: token })
       .send(updatedBlog);
 
     response.body.id = undefined;
+    response.body.user = undefined;
     expect(response.body).toEqual(updatedBlog);
     blogs = await api.get("/api/blogs");
     blogs.body[0].id = undefined;
+    blogs.body[0].user = undefined;
     expect(blogs.body[0]).toEqual(updatedBlog);
   }, 10000);
 
@@ -223,6 +285,7 @@ describe("testing PUT functionality", () => {
     };
     await api
       .put(`/api/blogs/643dfb4174f3bd2d54333da`)
+      .set({ authorization: token })
       .send(updatedBlog)
       .expect(400);
   });
