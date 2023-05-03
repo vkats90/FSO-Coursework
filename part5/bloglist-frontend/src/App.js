@@ -3,12 +3,16 @@ import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import LoginForm from "./components/LoginForm";
 import loginService from "./services/users";
+import AddBlog from "./components/AddBlog";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -16,16 +20,11 @@ const App = () => {
 
   useEffect(() => {
     const localStorage = window.localStorage.getItem("user");
-    if (localStorage) setUser(JSON.parse(localStorage));
+    if (localStorage) {
+      setUser(JSON.parse(localStorage));
+      blogService.setToken(JSON.parse(localStorage).token);
+    }
   }, []);
-
-  const handleUsername = (event) => {
-    setUsername(event.target.value);
-  };
-
-  const handlePassword = (event) => {
-    setPassword(event.target.value);
-  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -38,6 +37,16 @@ const App = () => {
     console.log(`${loggedUser.data.name} has logged in`);
     window.localStorage.setItem("user", JSON.stringify(loggedUser.data));
     setUser(loggedUser.data);
+    blogService.setToken(loggedUser.data.token);
+  };
+
+  const handleAddBlog = async (event) => {
+    event.preventDefault();
+
+    const blog = await blogService.addBlog({ title, author, url });
+    if (blog.error) return console.log(blog);
+
+    console.log(`added blog: ${blog.title}`);
   };
 
   const handleLogout = (event) => {
@@ -52,8 +61,8 @@ const App = () => {
           username={username}
           password={password}
           handleLogin={handleLogin}
-          handlePassword={handlePassword}
-          handleUsername={handleUsername}
+          handlePassword={({ target }) => setPassword(target.value)}
+          handleUsername={({ target }) => setUsername(target.value)}
         />
       )}
       {user && (
@@ -61,6 +70,16 @@ const App = () => {
           <h3>Welcome back {user.name}!</h3>
           <button onClick={handleLogout}>Logout</button>
           <h2>blogs</h2>
+          <AddBlog
+            title={title}
+            author={author}
+            url={url}
+            setAuthor={({ target }) => setAuthor(target.value)}
+            setTitle={({ target }) => setTitle(target.value)}
+            setUrl={({ target }) => setUrl(target.value)}
+            addBlog={handleAddBlog}
+          />
+          <br />
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
