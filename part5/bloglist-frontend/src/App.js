@@ -4,6 +4,7 @@ import blogService from "./services/blogs";
 import LoginForm from "./components/LoginForm";
 import loginService from "./services/users";
 import AddBlog from "./components/AddBlog";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -13,6 +14,8 @@ const App = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
+  const [message, setMessage] = useState("");
+  const [color, setColor] = useState("");
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -33,34 +36,54 @@ const App = () => {
 
     let loggedUser = await loginService.login({ username, password });
 
-    if (loggedUser.error) return console.log(JSON.stringify(loggedUser));
+    if (loggedUser.error) {
+      setMessage(loggedUser.error);
+      setColor("red");
+      setTimeout(() => setMessage(""), 3000);
+      return console.log(JSON.stringify(loggedUser));
+    }
 
     console.log(`${loggedUser.data.name} has logged in`);
     window.localStorage.setItem("user", JSON.stringify(loggedUser.data));
     setUser(loggedUser.data);
     blogService.setToken(loggedUser.data.token);
+    setMessage(`${loggedUser.data.username} logged in`);
+    setColor("darkgreen");
+    setTimeout(() => setMessage(""), 3000);
   };
 
   const handleAddBlog = async (event) => {
     event.preventDefault();
 
     const blog = await blogService.addBlog({ title, author, url });
-    if (blog.error) return console.log(blog);
+    if (blog.error) {
+      setMessage(blog.error);
+      setColor("red");
+      setTimeout(() => setMessage(""), 3000);
+      return console.log(blog);
+    }
 
     console.log(`added blog: ${blog.title}`);
     setBlogs(blogs.concat(blog));
     setAuthor("");
-    setBlogs("");
+    setTitle("");
     setUrl("");
+    setMessage(`Added blog ${blog.title}`);
+    setColor("darkgreen");
+    setTimeout(() => setMessage(""), 3000);
   };
 
   const handleLogout = (event) => {
     window.localStorage.removeItem("user");
+    setMessage(`See you later  ${user.name}`);
+    setColor("darkgreen");
+    setTimeout(() => setMessage(""), 3000);
     setUser(null);
   };
 
   return (
     <div>
+      {message && <Notification message={message} color={color} />}
       {!user && (
         <LoginForm
           username={username}
