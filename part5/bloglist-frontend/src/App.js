@@ -20,6 +20,7 @@ const App = () => {
 
   useEffect(() => {
     const localStorage = window.localStorage.getItem("user");
+    // need to test if token is still valid too, but it's not required in this exercise
     if (localStorage) {
       setUser(JSON.parse(localStorage));
       blogService.setToken(JSON.parse(localStorage).token);
@@ -47,6 +48,10 @@ const App = () => {
     if (blog.error) return console.log(blog);
 
     console.log(`added blog: ${blog.title}`);
+    setBlogs(blogs.concat(blog));
+    setAuthor("");
+    setBlogs("");
+    setUrl("");
   };
 
   const handleLogout = (event) => {
