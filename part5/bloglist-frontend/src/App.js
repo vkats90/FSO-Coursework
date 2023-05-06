@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import LoginForm from "./components/LoginForm";
@@ -9,14 +9,11 @@ import Toggable from "./components/Toggable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
   const [message, setMessage] = useState("");
   const [color, setColor] = useState("");
+
+  const noteFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -31,8 +28,7 @@ const App = () => {
     }
   }, []);
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
+  const handleLogin = async ({ username, password }) => {
     console.log(`${username} is logging in`);
 
     let loggedUser = await loginService.login({ username, password });
@@ -53,9 +49,7 @@ const App = () => {
     setTimeout(() => setMessage(""), 3000);
   };
 
-  const handleAddBlog = async (event) => {
-    event.preventDefault();
-
+  const handleAddBlog = async ({ title, author, url }) => {
     const blog = await blogService.addBlog({ title, author, url });
     if (blog.error) {
       setMessage(blog.error);
@@ -64,11 +58,9 @@ const App = () => {
       return console.log(blog);
     }
 
+    noteFormRef.current.toggleVisibility();
     console.log(`added blog: ${blog.title}`);
     setBlogs(blogs.concat(blog));
-    setAuthor("");
-    setTitle("");
-    setUrl("");
     setMessage(`Added blog ${blog.title}`);
     setColor("darkgreen");
     setTimeout(() => setMessage(""), 3000);
@@ -85,30 +77,14 @@ const App = () => {
   return (
     <div>
       {message && <Notification message={message} color={color} />}
-      {!user && (
-        <LoginForm
-          username={username}
-          password={password}
-          handleLogin={handleLogin}
-          handlePassword={({ target }) => setPassword(target.value)}
-          handleUsername={({ target }) => setUsername(target.value)}
-        />
-      )}
+      {!user && <LoginForm handleLogin={handleLogin} />}
       {user && (
         <div>
           <h3>Welcome back {user.name}!</h3>
           <button onClick={handleLogout}>Logout</button>
           <h2>blogs</h2>
-          <Toggable text="Add a note">
-            <AddBlog
-              title={title}
-              author={author}
-              url={url}
-              setAuthor={({ target }) => setAuthor(target.value)}
-              setTitle={({ target }) => setTitle(target.value)}
-              setUrl={({ target }) => setUrl(target.value)}
-              addBlog={handleAddBlog}
-            />
+          <Toggable text="Add a note" ref={noteFormRef}>
+            <AddBlog addBlog={handleAddBlog} />
           </Toggable>
           <br />
           {blogs.map((blog) => (

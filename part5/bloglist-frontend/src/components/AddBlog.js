@@ -1,28 +1,50 @@
-const AddBlog = ({
-  title,
-  author,
-  url,
-  setTitle,
-  setAuthor,
-  setUrl,
-  addBlog,
-}) => (
-  <form onSubmit={addBlog}>
-    <h3>Add a new blog:</h3>
-    <div>
-      Title:
-      <input type="text" value={title} name="Title" onChange={setTitle} />
-    </div>
-    <div>
-      Author:
-      <input type="text" value={author} name="Author" onChange={setAuthor} />
-    </div>
-    <div>
-      URL:
-      <input type="text" value={url} name="URL" onChange={setUrl} />
-    </div>
-    <button type="submit">Submit</button>
-  </form>
-);
+import { useState } from "react";
+
+const AddBlog = ({ addBlog }) => {
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
+
+  const createBlog = (event) => {
+    event.preventDefault();
+    addBlog({ title, author, url });
+    setAuthor("");
+    setTitle("");
+    setUrl("");
+  };
+  return (
+    <form onSubmit={createBlog}>
+      <h3>Add a new blog:</h3>
+      <div>
+        Title:
+        <input
+          type="text"
+          value={title}
+          name="Title"
+          onChange={({ target }) => setTitle(target.value)}
+        />
+      </div>
+      <div>
+        Author:
+        <input
+          type="text"
+          value={author}
+          name="Author"
+          onChange={({ target }) => setAuthor(target.value)}
+        />
+      </div>
+      <div>
+        URL:
+        <input
+          type="text"
+          value={url}
+          name="URL"
+          onChange={({ target }) => setUrl(target.value)}
+        />
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  );
+};
 
 export default AddBlog;
