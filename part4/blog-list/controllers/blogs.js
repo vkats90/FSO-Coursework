@@ -53,13 +53,6 @@ blogRouter.delete("/:id", userExtract, async (request, response, next) => {
 
 blogRouter.put("/:id", userExtract, async (request, response, next) => {
   try {
-    const user = request.user;
-    let blog = await Blog.findById(request.params.id);
-    if (blog.user.toString() !== user.id.toString()) {
-      return response
-        .status(401)
-        .json({ error: "unauthorized, you did not create this blog" });
-    }
     const { title, author, url, likes } = request.body;
     blog = await Blog.findByIdAndUpdate(
       request.params.id,
