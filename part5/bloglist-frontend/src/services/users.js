@@ -1,12 +1,12 @@
-import axios from "axios";
-const baseUrl = "/api/login";
+import axios from 'axios'
+const baseUrl = '/api/login'
 
 const login = async ({ username, password }) => {
   try {
-    return await axios.post(baseUrl, { username, password });
+    return await axios.post(baseUrl, { username, password })
   } catch (error) {
-    return { error: "Username or Password are incorrect" };
+    return { error: 'Username or Password are incorrect' }
   }
-};
+}
 
-export default { login };
+export default { login }
