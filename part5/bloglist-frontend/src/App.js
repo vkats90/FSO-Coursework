@@ -74,6 +74,22 @@ const App = () => {
     setUser(null);
   };
 
+  const handleAddLike = (blog) => {
+    let response = blogService.addLike(blog);
+    if (response.error) {
+      setMessage(response.error);
+      setColor("red");
+      setTimeout(() => setMessage(""), 3000);
+      return console.log(JSON.stringify(response));
+    }
+    setBlogs(
+      blogs.map((x) => {
+        if (x.id === blog.id) x = blog;
+        return x;
+      })
+    );
+  };
+
   return (
     <div>
       {message && <Notification message={message} color={color} />}
@@ -88,7 +104,7 @@ const App = () => {
           </Toggable>
           <br />
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} handleAddLike={handleAddLike} />
           ))}
         </div>
       )}

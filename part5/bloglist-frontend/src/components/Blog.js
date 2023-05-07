@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 const blogStyle = {
   border: "1px solid black",
   borderRadius: 5,
@@ -6,8 +7,14 @@ const blogStyle = {
   width: 500,
   margin: 5,
 };
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleAddLike }) => {
   const [visible, setVisible] = useState(false);
+
+  const addLike = () => {
+    blog.likes = blog.likes + 1;
+    handleAddLike(blog);
+  };
+
   return (
     <div style={blogStyle}>
       {blog.title}{" "}
@@ -20,7 +27,7 @@ const Blog = ({ blog }) => {
       <div style={{ display: visible ? "none" : "" }}></div>
       <div style={{ display: visible ? "" : "none" }}>
         <div>{blog.url}</div>
-        likes: {blog.likes} <button>like</button> <br />
+        likes: {blog.likes} <button onClick={addLike}>like</button> <br />
         {blog.user.name}
       </div>
     </div>

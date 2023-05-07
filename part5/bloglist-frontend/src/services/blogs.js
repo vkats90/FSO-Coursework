@@ -14,7 +14,6 @@ const setToken = (newToken) => {
 
 const addBlog = async ({ title, author, url }) => {
   try {
-    console.log("TOKEN:", token);
     const blog = await axios.post(
       baseUrl,
       { title, author, url },
@@ -26,5 +25,14 @@ const addBlog = async ({ title, author, url }) => {
   }
 };
 
+const addLike = async (blog) => {
+  try {
+    await axios.put(baseUrl + "/" + blog.id, blog, {
+      headers: { Authorization: token },
+    });
+  } catch (error) {
+    return error.response.data;
+  }
+};
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, setToken, addBlog };
+export default { getAll, setToken, addBlog, addLike };
