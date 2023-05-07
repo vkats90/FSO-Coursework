@@ -76,8 +76,8 @@ const App = () => {
     setUser(null);
   };
 
-  const handleAddLike = (blog) => {
-    let response = blogService.addLike(blog);
+  const handleAddLike = async (blog) => {
+    let response = await blogService.addLike(blog);
     if (response.error) {
       setMessage(response.error);
       setColor("red");
@@ -94,6 +94,19 @@ const App = () => {
     );
   };
 
+  const handleDelete = async (blog) => {
+    let response;
+    if (window.confirm("Are you sure you want to delete this blog?"))
+      response = await blogService.deleteBlog(blog);
+    if (response) {
+      setMessage(response.error);
+      setColor("red");
+      setTimeout(() => setMessage(""), 3000);
+      return console.log(JSON.stringify(response));
+    }
+    setBlogs(blogs.filter((x) => x.id !== blog.id));
+  };
+
   return (
     <div>
       {message && <Notification message={message} color={color} />}
@@ -108,7 +121,13 @@ const App = () => {
           </Toggable>
           <br />
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} handleAddLike={handleAddLike} />
+            <Blog
+              key={blog.id}
+              blog={blog}
+              handleAddLike={handleAddLike}
+              username={user.username}
+              handleDelete={handleDelete}
+            />
           ))}
         </div>
       )}

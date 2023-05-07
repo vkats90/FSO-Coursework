@@ -7,7 +7,7 @@ const blogStyle = {
   width: 500,
   margin: 5,
 };
-const Blog = ({ blog, handleAddLike }) => {
+const Blog = ({ blog, handleAddLike, username, handleDelete }) => {
   const [visible, setVisible] = useState(false);
 
   const addLike = () => {
@@ -28,7 +28,21 @@ const Blog = ({ blog, handleAddLike }) => {
       <div style={{ display: visible ? "" : "none" }}>
         <div>{blog.url}</div>
         likes: {blog.likes} <button onClick={addLike}>like</button> <br />
-        {blog.user.name}
+        {blog.user.name} <br />
+        {blog.user.username === username ? (
+          <button
+            style={{
+              background: "red",
+              color: "white",
+              borderColor: "white",
+            }}
+            onClick={() => handleDelete(blog)}
+          >
+            delete
+          </button>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );

@@ -34,5 +34,15 @@ const addLike = async (blog) => {
     return error.response.data;
   }
 };
+
+const deleteBlog = async (blog) => {
+  try {
+    await axios.delete(baseUrl + "/" + blog.id, {
+      headers: { Authorization: token },
+    });
+  } catch (error) {
+    return error.response.data;
+  }
+};
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, setToken, addBlog, addLike };
+export default { getAll, setToken, addBlog, addLike, deleteBlog };
