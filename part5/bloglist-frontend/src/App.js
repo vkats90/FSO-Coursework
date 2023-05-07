@@ -48,7 +48,6 @@ const App = () => {
     setColor("darkgreen");
     setTimeout(() => setMessage(""), 3000);
   };
-
   const handleAddBlog = async ({ title, author, url }) => {
     const blog = await blogService.addBlog({ title, author, url });
     if (blog.error) {
@@ -58,6 +57,7 @@ const App = () => {
       return console.log(blog);
     }
 
+    blog.user = user;
     noteFormRef.current.toggleVisibility();
     console.log(`added blog: ${blog.title}`);
     setBlogs(blogs.concat(blog));
