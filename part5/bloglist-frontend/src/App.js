@@ -16,7 +16,9 @@ const App = () => {
   const noteFormRef = useRef();
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService
+      .getAll()
+      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
   }, []);
 
   useEffect(() => {
@@ -83,10 +85,12 @@ const App = () => {
       return console.log(JSON.stringify(response));
     }
     setBlogs(
-      blogs.map((x) => {
-        if (x.id === blog.id) x = blog;
-        return x;
-      })
+      blogs
+        .map((x) => {
+          if (x.id === blog.id) x = blog;
+          return x;
+        })
+        .sort((a, b) => b.likes - a.likes)
     );
   };
 
