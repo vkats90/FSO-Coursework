@@ -14,6 +14,8 @@ test('renders content', async () => {
 
   render(<Note note={note} toggleImportance={mockHandler} />)
 
+  const element = screen.getByText('Component testing is done with react-testing-library')
+
   const user = userEvent.setup()
   const button = screen.getByText('make not important')
   await user.click(button)
