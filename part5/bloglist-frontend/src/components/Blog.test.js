@@ -28,3 +28,26 @@ test('url and likes are hidden', () => {
   let url_likes = container.querySelector('.blog_url_likes')
   expect(url_likes).toHaveStyle('display: none')
 })
+
+test('when button is clicked url and likes are shown', async () => {
+  const { container } = render(<Blog blog={testBlog} />)
+
+  const user = userEvent.setup()
+  const button = container.querySelector('.visibleButton')
+  await user.click(button)
+
+  let url_likes = container.querySelector('.blog_url_likes')
+  expect(url_likes).not.toHaveStyle('display:none')
+})
+
+test('clicking like button twice calls the like handler twice', async () => {
+  const mockHandler = jest.fn()
+  const { container } = render(<Blog blog={testBlog} handleAddLike={mockHandler} />)
+
+  const user = userEvent.setup()
+  const button = container.querySelector('.likeButton')
+  await user.click(button)
+  await user.click(button)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
+})
