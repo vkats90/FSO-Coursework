@@ -16,11 +16,14 @@ const Blog = ({ blog, handleAddLike, username, handleDelete }) => {
   }
 
   return (
-    <div style={blogStyle}>
-      {blog.title} <span style={{ fontStyle: 'italic', color: 'gray' }}>-{blog.author} </span>
+    <div style={blogStyle} className="blog_title">
+      {blog.title}{' '}
+      <span style={{ fontStyle: 'italic', color: 'gray' }} className="blog_author">
+        -{blog.author}{' '}
+      </span>
       <button onClick={() => setVisible(!visible)}>{visible ? 'hide' : 'show'}</button>
       <div style={{ display: visible ? 'none' : '' }}></div>
-      <div style={{ display: visible ? '' : 'none' }}>
+      <div style={{ display: visible ? '' : 'none' }} className="blog_url_likes">
         <div>{blog.url}</div>
         likes: {blog.likes} <button onClick={addLike}>like</button> <br />
         {blog.user.name} <br />
