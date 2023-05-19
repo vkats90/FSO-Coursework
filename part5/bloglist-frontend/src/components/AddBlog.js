@@ -22,6 +22,7 @@ const AddBlog = ({ addBlog }) => {
           value={title}
           name="Title"
           onChange={({ target }) => setTitle(target.value)}
+          placeholder="blog title"
         />
       </div>
       <div>
@@ -31,11 +32,18 @@ const AddBlog = ({ addBlog }) => {
           value={author}
           name="Author"
           onChange={({ target }) => setAuthor(target.value)}
+          placeholder="author name"
         />
       </div>
       <div>
         URL:
-        <input type="text" value={url} name="URL" onChange={({ target }) => setUrl(target.value)} />
+        <input
+          type="text"
+          value={url}
+          name="URL"
+          onChange={({ target }) => setUrl(target.value)}
+          placeholder="link to blog"
+        />
       </div>
       <button type="submit">Submit</button>
     </form>
