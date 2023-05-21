@@ -1,5 +1,5 @@
 import { useState, forwardRef, useImperativeHandle } from 'react'
-import PropTypes from 'prop-types' //not necessary, just for enforcing props
+//import PropTypes from 'prop-types' not necessary, just for enforcing props
 
 const Togglable = forwardRef((props, refs) => {
   const [visible, setVisible] = useState(false)
