@@ -27,3 +27,19 @@
 Cypress.Commands.add('resetDB', () => {
   cy.request('DELETE', `${Cypress.env('BACKEND')}/testing/reset`)
 })
+
+Cypress.Commands.add('addUser', () => {
+  const newUser = {
+    username: 'mars77',
+    name: 'vlady',
+    password: '12345',
+  }
+  cy.request('POST', `${Cypress.env('BACKEND')}/users`, newUser)
+})
+
+Cypress.Commands.add('login', ({ username, password }) => {
+  cy.request('POST', `${Cypress.env('BACKEND')}/login`, { username, password }).then(({ body }) => {
+    localStorage.setItem('user', JSON.stringify(body))
+    cy.visit('')
+  })
+})
