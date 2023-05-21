@@ -27,5 +27,22 @@ describe('Bloglist app', () => {
       cy.contains('mars77 logged in')
       cy.get('button').should('contain', 'Logout').and('contain', 'Add a note')
     })
+    describe('When logged in', function () {
+      beforeEach(() => {
+        cy.login({ username: 'mars77', password: '12345' })
+      })
+
+      it('A blog can be created', () => {
+        cy.get('button').contains('Add a note').click()
+        cy.contains('Title').find('input').type('A note created with cypress')
+        cy.contains('Author').find('input').type('Cypress')
+        cy.contains('URL').find('input').type('https://docs.cypress.io/')
+        cy.get('button').contains('Submit').click()
+        cy.get('.notification').should('contain', 'Added blog A note created with cypress')
+        cy.get('.blog_title')
+          .contains('A note created with cypress')
+          .should('have.css', 'border', '1px solid rgb(0, 0, 0)')
+      })
+    })
   })
 })
