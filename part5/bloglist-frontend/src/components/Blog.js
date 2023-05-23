@@ -34,6 +34,7 @@ const Blog = ({ blog, handleAddLike, username, handleDelete }) => {
         {blog.user.name} <br />
         {blog.user.username === username ? (
           <button
+            className="deleteButton"
             style={{
               background: 'red',
               color: 'white',

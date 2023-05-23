@@ -56,6 +56,11 @@ describe('Bloglist app', () => {
           cy.contains('a test blog').find('.likeButton').click()
           cy.contains('a test blog').find('.likes').should('have.text', '2 ')
         })
+        it('I can delete a blog I created', () => {
+          cy.contains('a test blog').find('.visibleButton').click()
+          cy.contains('a test blog').find('.deleteButton').click()
+          cy.get('.blog_title').should('not.contain', 'a test blog')
+        })
       })
     })
   })
