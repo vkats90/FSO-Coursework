@@ -43,6 +43,20 @@ describe('Bloglist app', () => {
           .contains('A note created with cypress')
           .should('have.css', 'border', '1px solid rgb(0, 0, 0)')
       })
+      describe('and several blogs exist', () => {
+        beforeEach(() => {
+          cy.addBlog({ title: 'a test blog', author: 'cypress1', url: 'docs.cypress.io' })
+          cy.addBlog({ title: 'test blog 2', author: 'cypress2', url: 'docs.cypress.io' })
+          cy.addBlog({ title: 'another test blog', author: 'cypress3', url: 'docs.cypress.io' })
+        })
+        it("I can like one of them and increase it's number of likes", () => {
+          cy.contains('a test blog').find('.visibleButton').click()
+          cy.contains('a test blog').find('.likeButton').click()
+          cy.contains('a test blog').find('.likes').should('have.text', '1 ')
+          cy.contains('a test blog').find('.likeButton').click()
+          cy.contains('a test blog').find('.likes').should('have.text', '2 ')
+        })
+      })
     })
   })
 })

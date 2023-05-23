@@ -76,7 +76,7 @@ const App = () => {
 
   const handleAddLike = async (blog) => {
     let response = await blogService.addLike(blog)
-    if (response.error) {
+    if (response && response.error) {
       setMessage(response.error)
       setColor('red')
       setTimeout(() => setMessage(''), 3000)

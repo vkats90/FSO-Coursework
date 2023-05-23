@@ -26,7 +26,7 @@ const Blog = ({ blog, handleAddLike, username, handleDelete }) => {
       </button>
       <div style={{ display: visible ? '' : 'none' }} className="blog_url_likes">
         <div>{blog.url}</div>
-        likes: {blog.likes}{' '}
+        likes: <span className="likes">{blog.likes} </span>
         <button onClick={addLike} className="likeButton">
           like
         </button>{' '}
