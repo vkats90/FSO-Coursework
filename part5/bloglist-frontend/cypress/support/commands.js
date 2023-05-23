@@ -34,7 +34,13 @@ Cypress.Commands.add('addUser', () => {
     name: 'vlady',
     password: '12345',
   }
+  const newUser2 = {
+    username: 'marsimillian77',
+    name: 'different vlady',
+    password: '123456',
+  }
   cy.request('POST', `${Cypress.env('BACKEND')}/users`, newUser)
+  cy.request('POST', `${Cypress.env('BACKEND')}/users`, newUser2)
 })
 
 Cypress.Commands.add('login', ({ username, password }) => {

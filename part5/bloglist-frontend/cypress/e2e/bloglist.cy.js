@@ -61,6 +61,12 @@ describe('Bloglist app', () => {
           cy.contains('a test blog').find('.deleteButton').click()
           cy.get('.blog_title').should('not.contain', 'a test blog')
         })
+        it.only("a user who didn't create the blog can't see the delete button", () => {
+          cy.contains('Logout').click()
+          cy.login({ username: 'marsimillian77', password: '123456' })
+          cy.contains('a test blog').find('.visibleButton').click()
+          cy.contains('a test blog').should('not.contain', '.deleteButton')
+        })
       })
     })
   })
