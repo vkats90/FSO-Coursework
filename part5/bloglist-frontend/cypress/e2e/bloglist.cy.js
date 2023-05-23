@@ -61,11 +61,22 @@ describe('Bloglist app', () => {
           cy.contains('a test blog').find('.deleteButton').click()
           cy.get('.blog_title').should('not.contain', 'a test blog')
         })
-        it.only("a user who didn't create the blog can't see the delete button", () => {
+        it("a user who didn't create the blog can't see the delete button", () => {
           cy.contains('Logout').click()
           cy.login({ username: 'marsimillian77', password: '123456' })
           cy.contains('a test blog').find('.visibleButton').click()
           cy.contains('a test blog').should('not.contain', '.deleteButton')
+        })
+        it('they are ordered by the number of likes', () => {
+          cy.contains('another test blog').find('.visibleButton').click()
+          cy.contains('another test blog').find('.likeButton').click()
+          cy.get('.blog_title').eq(0).contains('another test blog')
+
+          cy.contains('test blog 2').find('.visibleButton').click()
+          cy.contains('test blog 2').find('.likeButton').click().click()
+          cy.get('.blog_title').eq(0).contains('test blog 2')
+          cy.get('.blog_title').eq(1).contains('another test blog')
+          cy.get('.blog_title').eq(2).contains('a test blog')
         })
       })
     })
