@@ -13,7 +13,6 @@ const App = () => {
   useEffect(() => {
     ;(async () => {
       const anecdotes = await anecdoteServices.getAll()
-      console.log(anecdotes)
       dispatch(setAnecdotes(anecdotes))
     })()
   }, [])
