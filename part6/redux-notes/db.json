@@ -14,6 +14,11 @@
       "content": "new note is added",
       "important": true,
       "id": 3
+    },
+    {
+      "content": "new note is added again",
+      "important": true,
+      "id": 4
     }
   ]
 }
