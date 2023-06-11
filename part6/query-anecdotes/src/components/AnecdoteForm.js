@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "react-query"
 const AnecdoteForm = () => {
 	const queryClient = useQueryClient()
 
-	const anecdoteMutation = useMutation(addAnecdote, {
+	const newAnecdoteMutation = useMutation(addAnecdote, {
 		onSuccess: (newAnecdote) => {
 			const anecdotes = queryClient.getQueryData("anecdotes")
 			queryClient.setQueryData("anecdotes", anecdotes.concat(newAnecdote))
@@ -15,7 +15,7 @@ const AnecdoteForm = () => {
 		event.preventDefault()
 		const content = event.target.anecdote.value
 		event.target.anecdote.value = ""
-		anecdoteMutation.mutate({ content, votes: 0 })
+		newAnecdoteMutation.mutate({ content, votes: 0 })
 	}
 
 	return (
