@@ -11,6 +11,30 @@ const AnecdoteForm = () => {
 		onSuccess: (newAnecdote) => {
 			const anecdotes = queryClient.getQueryData("anecdotes")
 			queryClient.setQueryData("anecdotes", anecdotes.concat(newAnecdote))
+			dispatch({
+				type: "SET_NOTIFICATION",
+				payload: `Added Anecdote: ${newAnecdote.content} `,
+			})
+			setTimeout(
+				() =>
+					dispatch({
+						type: "CLEAR_STATE",
+					}),
+				5000
+			)
+		},
+		onError: (data) => {
+			dispatch({
+				type: "SET_NOTIFICATION",
+				payload: data.response.data.error,
+			})
+			setTimeout(
+				() =>
+					dispatch({
+						type: "CLEAR_STATE",
+					}),
+				5000
+			)
 		},
 	})
 
@@ -19,17 +43,6 @@ const AnecdoteForm = () => {
 		const content = event.target.anecdote.value
 		event.target.anecdote.value = ""
 		newAnecdoteMutation.mutate({ content, votes: 0 })
-		dispatch({
-			type: "SET_NOTIFICATION",
-			payload: `Added Anecdote: ${content} `,
-		})
-		setTimeout(
-			() =>
-				dispatch({
-					type: "CLEAR_STATE",
-				}),
-			5000
-		)
 	}
 
 	return (
