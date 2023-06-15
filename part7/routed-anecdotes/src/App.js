@@ -20,6 +20,15 @@ const Menu = () => {
 	)
 }
 
+const Notification = ({ message }) => {
+	const style = {
+		padding: 5,
+		border: "2px solid red",
+		borderRadius: 2,
+	}
+	return <p style={style}>{message}</p>
+}
+
 const SingleAnecdote = ({ anecdotes }) => {
 	const id = useParams().id
 	const anecdote = anecdotes.filter((unit) => unit.id === Number(id))[0]
@@ -37,7 +46,6 @@ const SingleAnecdote = ({ anecdotes }) => {
 }
 
 const AnecdoteList = ({ anecdotes }) => {
-	const navigate = useNavigate()
 	return (
 		<div>
 			<h2>Anecdotes</h2>
@@ -90,6 +98,8 @@ const CreateNew = (props) => {
 	const [author, setAuthor] = useState("")
 	const [info, setInfo] = useState("")
 
+	const navigate = useNavigate()
+
 	const handleSubmit = (e) => {
 		e.preventDefault()
 		props.addNew({
@@ -98,6 +108,9 @@ const CreateNew = (props) => {
 			info,
 			votes: 0,
 		})
+		props.notify(`A new anecdote ${content} was created!`)
+		setTimeout(() => props.notify(""), 5000)
+		navigate("/")
 	}
 
 	return (
@@ -176,10 +189,14 @@ const App = () => {
 		<div>
 			<h1>Software anecdotes</h1>
 			<Menu />
+			{notification && <Notification message={notification} />}
 			<Routes>
 				<Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
 				<Route path="/about" element={<About />} />
-				<Route path="/create" element={<CreateNew addNew={addNew} />} />
+				<Route
+					path="/create"
+					element={<CreateNew addNew={addNew} notify={setNotification} />}
+				/>
 				<Route
 					path="/anecdotes/:id"
 					element={<SingleAnecdote anecdotes={anecdotes} />}
