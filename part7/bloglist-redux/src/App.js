@@ -7,7 +7,8 @@ import AddBlog from './components/AddBlog'
 import Notification from './components/Notification'
 import Toggable from './components/Toggable'
 import { setNotification } from './reducers/notificationReducer'
-import { useDispatch } from 'react-redux'
+import { getBlogs, addNewBlog } from './reducers/blogReducer'
+import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -17,12 +18,15 @@ const App = () => {
   const noteFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)))
-  }, [])
+    dispatch(getBlogs())
+  }, [dispatch])
+
+  const newBlogs = useSelector((state) => state.blog)
+  console.log(newBlogs)
 
   useEffect(() => {
     const localStorage = window.localStorage.getItem('user')
-    // need to test if token is still valid too, but it's not required in this exercise
+    // need to test if token is still valid too,
     if (localStorage) {
       setUser(JSON.parse(localStorage))
       blogService.setToken(JSON.parse(localStorage).token)
@@ -46,17 +50,10 @@ const App = () => {
     dispatch(setNotification(`${loggedUser.data.username} logged in`, 'darkgreen', 3))
   }
   const handleAddBlog = async ({ title, author, url }) => {
-    const blog = await blogService.addBlog({ title, author, url })
-    if (blog.error) {
-      dispatch(setNotification(blog.error, 'red', 3))
-      return console.log(blog)
-    }
+    //const blog = await blogService.addBlog({ title, author, url })
+    dispatch(addNewBlog({ title, author, url, user }))
 
-    blog.user = user
     noteFormRef.current.toggleVisibility()
-    console.log(`added blog: ${blog.title}`)
-    setBlogs(blogs.concat(blog))
-    dispatch(setNotification(`Added blog ${blog.title}`, 'darkgreen', 3))
   }
 
   const handleLogout = () => {
@@ -105,7 +102,7 @@ const App = () => {
             <AddBlog addBlog={handleAddBlog} />
           </Toggable>
           <br />
-          {blogs.map((blog) => (
+          {newBlogs.map((blog) => (
             <Blog
               key={blog.id}
               blog={blog}
