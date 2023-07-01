@@ -7,11 +7,10 @@ import AddBlog from './components/AddBlog'
 import Notification from './components/Notification'
 import Toggable from './components/Toggable'
 import { setNotification } from './reducers/notificationReducer'
-import { getBlogs, addNewBlog } from './reducers/blogReducer'
+import { getBlogs } from './reducers/blogReducer'
 import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const dispatch = useDispatch()
 
@@ -21,8 +20,7 @@ const App = () => {
     dispatch(getBlogs())
   }, [dispatch])
 
-  const newBlogs = useSelector((state) => state.blog)
-  console.log(newBlogs)
+  const blogs = useSelector((state) => state.blog)
 
   useEffect(() => {
     const localStorage = window.localStorage.getItem('user')
@@ -49,10 +47,7 @@ const App = () => {
     blogService.setToken(loggedUser.data.token)
     dispatch(setNotification(`${loggedUser.data.username} logged in`, 'darkgreen', 3))
   }
-  const handleAddBlog = async ({ title, author, url }) => {
-    //const blog = await blogService.addBlog({ title, author, url })
-    dispatch(addNewBlog({ title, author, url, user }))
-
+  const toggleForm = () => {
     noteFormRef.current.toggleVisibility()
   }
 
@@ -62,33 +57,7 @@ const App = () => {
     setUser(null)
   }
 
-  const handleAddLike = async (blog) => {
-    let response = await blogService.addLike(blog)
-    if (response && response.error) {
-      dispatch(setNotification(response.error, 'red', 3))
-      return console.log(JSON.stringify(response))
-    }
-    setBlogs(
-      blogs
-        .map((x) => {
-          if (x.id === blog.id) x = blog
-          return x
-        })
-        .sort((a, b) => b.likes - a.likes)
-    )
-  }
-
-  const handleDelete = async (blog) => {
-    let response
-    if (window.confirm('Are you sure you want to delete this blog?'))
-      response = await blogService.deleteBlog(blog)
-    if (response) {
-      dispatch(setNotification(response.error, 'red', 3))
-      return console.log(JSON.stringify(response))
-    }
-    setBlogs(blogs.filter((x) => x.id !== blog.id))
-  }
-
+  console.log(blogs)
   return (
     <div>
       <Notification />
@@ -99,18 +68,14 @@ const App = () => {
           <button onClick={handleLogout}>Logout</button>
           <h2>blogs</h2>
           <Toggable text="Add a note" ref={noteFormRef}>
-            <AddBlog addBlog={handleAddBlog} />
+            <AddBlog user={user} toggleForm={toggleForm} />
           </Toggable>
           <br />
-          {newBlogs.map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              handleAddLike={handleAddLike}
-              username={user.username}
-              handleDelete={handleDelete}
-            />
-          ))}
+          {!blogs.length ? (
+            <p>Loading...</p>
+          ) : (
+            blogs.map((blog) => <Blog key={blog.id} blog={blog} username={user.username} />)
+          )}
         </div>
       )}
     </div>

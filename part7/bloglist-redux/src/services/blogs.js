@@ -27,9 +27,10 @@ const addBlog = async ({ title, author, url }) => {
 
 const addLike = async (blog) => {
   try {
-    await axios.put(baseUrl + '/' + blog.id, blog, {
+    const response = await axios.put(baseUrl + '/' + blog.id, blog, {
       headers: { Authorization: token },
     })
+    return response.data
   } catch (error) {
     return error.response.data
   }
@@ -37,11 +38,13 @@ const addLike = async (blog) => {
 
 const deleteBlog = async (blog) => {
   try {
-    await axios.delete(baseUrl + '/' + blog.id, {
+    const response = await axios.delete(baseUrl + '/' + blog.id, {
       headers: { Authorization: token },
     })
+    if (response.status === 204) return blog
+    return response.data
   } catch (error) {
-    return error.response.data
+    return error
   }
 }
 

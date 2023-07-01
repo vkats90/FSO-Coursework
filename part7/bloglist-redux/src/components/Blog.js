@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { likeABlog, deleteABlog } from '../reducers/blogReducer'
 
 const blogStyle = {
   border: '1px solid black',
@@ -7,12 +9,13 @@ const blogStyle = {
   width: 500,
   margin: 5,
 }
-const Blog = ({ blog, handleAddLike, username, handleDelete }) => {
+const Blog = ({ blog, username }) => {
   const [visible, setVisible] = useState(false)
 
+  const dispatch = useDispatch()
+
   const addLike = () => {
-    blog.likes = blog.likes + 1
-    handleAddLike(blog)
+    dispatch(likeABlog({ ...blog, likes: blog.likes + 1 }))
   }
 
   return (
@@ -40,7 +43,7 @@ const Blog = ({ blog, handleAddLike, username, handleDelete }) => {
               color: 'white',
               borderColor: 'white',
             }}
-            onClick={() => handleDelete(blog)}
+            onClick={() => dispatch(deleteABlog(blog))}
           >
             delete
           </button>
