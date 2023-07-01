@@ -1,17 +1,39 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
+import NotificationContext from '../notificationContext'
+import blogService from '../services/blogs'
 
-const AddBlog = ({ addBlog }) => {
+const AddBlog = ({ user, toggleForm }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [message, setMessage] = useContext(NotificationContext)
 
-  const createBlog = (event) => {
+  const queryClient = useQueryClient()
+
+  const newBlogMutation = useMutation(blogService.addBlog, {
+    onSuccess: (blog) => {
+      console.log(blog)
+      const blogs = queryClient.getQueryData('blogs')
+      queryClient.setQueryData('blogs', blogs.concat(blog))
+      setMessage(`Added blog ${blog.title}`, 'darkgreen')
+      console.log(`added blog: ${blog.title}`)
+    },
+    onError: (error) => {
+      setMessage(error.response.data, 'red')
+      return console.log(error.response.data)
+    },
+  })
+
+  const createBlog = async (event) => {
     event.preventDefault()
-    addBlog({ title, author, url })
+    newBlogMutation.mutate({ title, author, url, user })
+    toggleForm()
     setAuthor('')
     setTitle('')
     setUrl('')
   }
+
   return (
     <form onSubmit={createBlog}>
       <h3>Add a new blog:</h3>

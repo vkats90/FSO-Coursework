@@ -7,16 +7,25 @@ import AddBlog from './components/AddBlog'
 import Notification from './components/Notification'
 import Toggable from './components/Toggable'
 import NotificationContext from './notificationContext'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [notification, setMessage] = useContext(NotificationContext)
   const noteFormRef = useRef()
 
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)))
-  }, [])
+  const queryClient = useQueryClient()
+
+  const blogs = useQuery(
+    'blogs',
+    () => blogService.getAll().then((blogs) => blogs.sort((a, b) => b.likes - a.likes)),
+    {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    }
+  )
+
+  const setBlogs = () => {}
 
   useEffect(() => {
     const localStorage = window.localStorage.getItem('user')
@@ -43,18 +52,8 @@ const App = () => {
     blogService.setToken(loggedUser.data.token)
     setMessage(`${loggedUser.data.username} logged in`, 'darkgreen')
   }
-  const handleAddBlog = async ({ title, author, url }) => {
-    const blog = await blogService.addBlog({ title, author, url })
-    if (blog.error) {
-      setMessage(blog.error, 'red')
-      return console.log(blog)
-    }
-
-    blog.user = user
+  const toggleForm = () => {
     noteFormRef.current.toggleVisibility()
-    console.log(`added blog: ${blog.title}`)
-    setBlogs(blogs.concat(blog))
-    setMessage(`Added blog ${blog.title}`, 'darkgreen')
   }
 
   const handleLogout = () => {
@@ -101,18 +100,24 @@ const App = () => {
           <button onClick={handleLogout}>Logout</button>
           <h2>blogs</h2>
           <Toggable text="Add a note" ref={noteFormRef}>
-            <AddBlog addBlog={handleAddBlog} />
+            <AddBlog user={user} toggleForm={toggleForm} />
           </Toggable>
           <br />
-          {blogs.map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              handleAddLike={handleAddLike}
-              username={user.username}
-              handleDelete={handleDelete}
-            />
-          ))}
+          {blogs.isLoading ? (
+            <p>Loading...</p>
+          ) : blogs.isError ? (
+            <p>{blogs.error.message}</p>
+          ) : (
+            blogs.data.map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                handleAddLike={handleAddLike}
+                username={user.username}
+                handleDelete={handleDelete}
+              />
+            ))
+          )}
         </div>
       )}
     </div>

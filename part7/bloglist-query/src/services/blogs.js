@@ -13,16 +13,11 @@ const setToken = (newToken) => {
 }
 
 const addBlog = async ({ title, author, url }) => {
-  try {
-    const blog = await axios.post(
-      baseUrl,
-      { title, author, url },
-      { headers: { Authorization: token } }
-    )
-    return blog.data
-  } catch (error) {
-    return error.response.data
-  }
+  const blog = await axios.post(
+    baseUrl,
+    { title, author, url },
+    { headers: { Authorization: token } }
+  )
 }
 
 const addLike = async (blog) => {
