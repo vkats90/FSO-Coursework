@@ -18,26 +18,21 @@ const addBlog = async ({ title, author, url }) => {
     { title, author, url },
     { headers: { Authorization: token } }
   )
+  return blog.data
 }
 
 const addLike = async (blog) => {
-  try {
-    await axios.put(baseUrl + '/' + blog.id, blog, {
-      headers: { Authorization: token },
-    })
-  } catch (error) {
-    return error.response.data
-  }
+  await axios.put(baseUrl + '/' + blog.id, blog, {
+    headers: { Authorization: token },
+  })
+  return blog
 }
 
 const deleteBlog = async (blog) => {
-  try {
-    await axios.delete(baseUrl + '/' + blog.id, {
-      headers: { Authorization: token },
-    })
-  } catch (error) {
-    return error.response.data
-  }
+  await axios.delete(baseUrl + '/' + blog.id, {
+    headers: { Authorization: token },
+  })
+  return blog
 }
 
 export default { getAll, setToken, addBlog, addLike, deleteBlog }

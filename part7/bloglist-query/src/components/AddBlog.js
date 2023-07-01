@@ -15,7 +15,7 @@ const AddBlog = ({ user, toggleForm }) => {
     onSuccess: (blog) => {
       console.log(blog)
       const blogs = queryClient.getQueryData('blogs')
-      queryClient.setQueryData('blogs', blogs.concat(blog))
+      queryClient.setQueryData('blogs', blogs.concat({ ...blog, user }))
       setMessage(`Added blog ${blog.title}`, 'darkgreen')
       console.log(`added blog: ${blog.title}`)
     },

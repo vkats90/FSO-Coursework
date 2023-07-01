@@ -25,8 +25,6 @@ const App = () => {
     }
   )
 
-  const setBlogs = () => {}
-
   useEffect(() => {
     const localStorage = window.localStorage.getItem('user')
     // need to test if token is still valid too, but it's not required in this exercise
@@ -62,34 +60,6 @@ const App = () => {
     setUser(null)
   }
 
-  const handleAddLike = async (blog) => {
-    let response = await blogService.addLike(blog)
-    if (response && response.error) {
-      setMessage(response.error, 'red')
-      return console.log(JSON.stringify(response))
-    }
-    setBlogs(
-      blogs
-        .map((x) => {
-          if (x.id === blog.id) x = blog
-          return x
-        })
-        .sort((a, b) => b.likes - a.likes)
-    )
-  }
-
-  const handleDelete = async (blog) => {
-    let response
-    if (window.confirm('Are you sure you want to delete this blog?'))
-      response = await blogService.deleteBlog(blog)
-    if (response) {
-      setMessage(response.error, 'red')
-
-      return console.log(JSON.stringify(response))
-    }
-    setBlogs(blogs.filter((x) => x.id !== blog.id))
-  }
-
   return (
     <div>
       {notification.message && <Notification />}
@@ -108,15 +78,7 @@ const App = () => {
           ) : blogs.isError ? (
             <p>{blogs.error.message}</p>
           ) : (
-            blogs.data.map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                handleAddLike={handleAddLike}
-                username={user.username}
-                handleDelete={handleDelete}
-              />
-            ))
+            blogs.data.map((blog) => <Blog key={blog.id} blog={blog} username={user.username} />)
           )}
         </div>
       )}
