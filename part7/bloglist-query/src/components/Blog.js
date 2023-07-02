@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
-import NotificationContext from '../notificationContext'
+import Context from '../Context'
 import blogService from '../services/blogs'
 
 const blogStyle = {
@@ -10,15 +10,14 @@ const blogStyle = {
   width: 500,
   margin: 5,
 }
-const Blog = ({ blog, username }) => {
+const Blog = ({ blog }) => {
   const [visible, setVisible] = useState(false)
-  const [message, setMessage] = useContext(NotificationContext)
+  const [message, setMessage, user] = useContext(Context)
 
   const queryClient = useQueryClient()
 
   const likeBlogMutation = useMutation(blogService.addLike, {
     onSuccess: (res) => {
-      console.log(res)
       const blogs = queryClient.getQueryData('blogs')
       queryClient.setQueryData(
         'blogs',
@@ -78,7 +77,7 @@ const Blog = ({ blog, username }) => {
         </button>{' '}
         <br />
         {blog.user.name} <br />
-        {blog.user.username === username ? (
+        {blog.user.username === user.username ? (
           <button
             className="deleteButton"
             style={{

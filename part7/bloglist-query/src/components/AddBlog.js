@@ -1,13 +1,13 @@
 import { useState, useContext } from 'react'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
-import NotificationContext from '../notificationContext'
+import { useMutation, useQueryClient } from 'react-query'
+import Context from '../Context'
 import blogService from '../services/blogs'
 
-const AddBlog = ({ user, toggleForm }) => {
+const AddBlog = ({ toggleForm }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  const [message, setMessage] = useContext(NotificationContext)
+  const [message, setMessage, user] = useContext(Context)
 
   const queryClient = useQueryClient()
 

@@ -1,6 +1,6 @@
 import { useReducer, createContext } from 'react'
 
-const NotificationContext = createContext()
+const Context = createContext()
 
 const notificationReducer = (state, action) => {
   switch (action.type) {
@@ -13,8 +13,18 @@ const notificationReducer = (state, action) => {
   }
 }
 
+const userReducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_USER':
+      return action.payload
+    default:
+      return ''
+  }
+}
+
 export const NotificationContextProvider = (props) => {
   const [message, dispatch] = useReducer(notificationReducer, '')
+  const [user, dispatchUser] = useReducer(userReducer, '')
 
   const setMessage = (message, color) => {
     console.log(message)
@@ -23,11 +33,15 @@ export const NotificationContextProvider = (props) => {
     setTimeout(() => dispatch({ type: 'SET_MESSAGE', payload: '' }), 3000)
   }
 
+  const setUser = (newuUser) => {
+    dispatchUser({ type: 'SET_USER', payload: newuUser })
+  }
+
   return (
-    <NotificationContext.Provider value={[message, setMessage]}>
+    <Context.Provider value={[message, setMessage, user, setUser]}>
       {props.children}
-    </NotificationContext.Provider>
+    </Context.Provider>
   )
 }
 
-export default NotificationContext
+export default Context

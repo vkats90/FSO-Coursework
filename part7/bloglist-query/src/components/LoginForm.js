@@ -1,18 +1,35 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
+import Context from '../Context'
+import loginService from '../services/users'
+import blogService from '../services/blogs'
 
-const LoginForm = ({ handleLogin }) => {
+const LoginForm = () => {
+  const [notification, setMessage, user, setUser] = useContext(Context)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const login = (event) => {
+  const logIn = async (event) => {
     event.preventDefault()
-    handleLogin({ username, password })
+    console.log(`${username} is logging in`)
+
+    let loggedUser = await loginService.login({ username, password })
+
+    if (loggedUser.error) {
+      setMessage(loggedUser.error, 'red')
+      return console.log(JSON.stringify(loggedUser))
+    }
+
+    console.log(`${loggedUser.data.name} has logged in`)
+    window.localStorage.setItem('user', JSON.stringify(loggedUser.data))
+    setUser(loggedUser.data)
+    blogService.setToken(loggedUser.data.token)
+    setMessage(`${loggedUser.data.username} has logged in`, 'darkgreen')
   }
 
   return (
     <div>
       <h2>Login</h2>
-      <form onSubmit={login}>
+      <form onSubmit={logIn}>
         <div>
           username
           <input
