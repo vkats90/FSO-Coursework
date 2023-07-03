@@ -9,4 +9,12 @@ const login = async ({ username, password }) => {
   }
 }
 
-export default { login }
+const getUsers = async () => {
+  try {
+    return await axios.get('/api/users')
+  } catch (error) {
+    return { error: error.message }
+  }
+}
+
+export default { login, getUsers }
