@@ -1,11 +1,12 @@
-import { useEffect, useRef, useContext } from 'react'
+import { useEffect, useContext } from 'react'
 import Users from './Routes/Users'
+import Blogs from './Routes/Blogs'
+import DetailedUser from './Routes/DetailedUser.js'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Context from './Context'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
-import Blogs from './Routes/Blogs'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 const App = () => {
   const [notification, setMessage, user, setUser] = useContext(Context)
@@ -35,6 +36,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Blogs />} />
             <Route path="/users" element={<Users />} />
+            <Route path="/users/:id" element={<DetailedUser />} />
           </Routes>
         </div>
       )}
