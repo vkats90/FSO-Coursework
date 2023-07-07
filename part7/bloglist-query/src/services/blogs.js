@@ -22,7 +22,7 @@ const addBlog = async ({ title, author, url }) => {
   return blog.data
 }
 
-const addLike = async (blog) => {
+const updateBlog = async (blog) => {
   await axios.put(baseUrl + '/' + blog.id, blog, {
     headers: { Authorization: token },
   })
@@ -36,4 +36,4 @@ const deleteBlog = async (blog) => {
   return blog
 }
 
-export default { getAll, setToken, addBlog, addLike, deleteBlog }
+export default { getAll, setToken, addBlog, updateBlog, deleteBlog }

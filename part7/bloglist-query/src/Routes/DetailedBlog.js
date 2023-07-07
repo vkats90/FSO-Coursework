@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query'
 import blogService from '../services/blogs'
 import { useParams, useNavigate } from 'react-router-dom'
 import Context from '../Context'
+import Comments from '../components/Comments'
 
 const DetailedBlog = () => {
   const [message, setMessage, user] = useContext(Context)
@@ -24,7 +25,7 @@ const DetailedBlog = () => {
     name: "vlad",
     username: "marsimillian77"
   }} */
-  const likeBlogMutation = useMutation(blogService.addLike, {
+  const updateBlogMutation = useMutation(blogService.updateBlog, {
     onSuccess: (res) => {
       const response = queryClient.getQueryData('blogs')
       queryClient.setQueryData(
@@ -61,7 +62,12 @@ const DetailedBlog = () => {
   })
 
   const addLike = () => {
-    likeBlogMutation.mutate({ ...blog, likes: blog.likes + 1 })
+    updateBlogMutation.mutate({ ...blog, likes: blog.likes + 1 })
+  }
+
+  const addComment = (comment) => (event) => {
+    event.preventDefault()
+    updateBlogMutation.mutate({ ...blog, comments: blog.comments.concat(comment) })
   }
 
   const handleDelete = (blog) => {
@@ -96,26 +102,25 @@ const DetailedBlog = () => {
         </button>{' '}
       </div>
       added by: {blog.user.name}
-      <div>
-        {blog.user.username === user.username ? (
-          <button
-            className="deleteButton"
-            style={{
-              background: 'red',
-              color: 'white',
-              borderColor: 'white',
-            }}
-            onClick={() => handleDelete(blog)}
-          >
-            delete
-          </button>
-        ) : (
-          ''
-        )}
-      </div>
+      <Comments blog={blog} addComment={addComment} />
+      <form></form>
+      {blog.user.username === user.username ? (
+        <button
+          className="deleteButton"
+          style={{
+            background: 'red',
+            color: 'white',
+            borderColor: 'white',
+          }}
+          onClick={() => handleDelete(blog)}
+        >
+          delete
+        </button>
+      ) : (
+        ''
+      )}
     </div>
   )
-  // return <p>{blog.title}</p>
 }
 
 export default DetailedBlog
