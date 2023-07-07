@@ -7,20 +7,11 @@ import Context from '../Context'
 const DetailedBlog = () => {
   const [message, setMessage, user] = useContext(Context)
 
-  console.log(user)
-
   const navigate = useNavigate()
 
   const id = useParams().id
   const queryClient = useQueryClient()
-  const blogs = useQuery('blogs', () => blogService.getAll().then((res) => res), {
-    refetchOnWindowFocus: false,
-    retry: 1,
-  })
-  if (blogs.isLoading) return <p>Loading...</p>
 
-  const blog = blogs.data.find((n) => n.id === id)
-  console.log(blog)
   /*
   const blog = {
     author: "George Lucas",
@@ -78,6 +69,22 @@ const DetailedBlog = () => {
       deleteBlogMutation.mutate(blog)
     navigate('/')
   }
+
+  const blogs = useQuery(
+    'blogs',
+    () => blogService.getAll().then((res) => res.sort((a, b) => b.likes - a.likes)),
+    {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    }
+  )
+  console.log(blogs)
+
+  if (blogs.isLoading) return <p>Loading...</p>
+
+  const blog = blogs.data.find((n) => n.id === id)
+  console.log(blog)
+
   return (
     <div className="blog_url_likes">
       <h3>{blog.title}</h3>

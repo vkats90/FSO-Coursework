@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { useQuery } from 'react-query'
 const baseUrl = '/api/blogs'
 
 const getAll = async () => {
