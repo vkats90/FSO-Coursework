@@ -12,7 +12,7 @@ const User = ({ user }) => {
     <tbody>
       <tr>
         <td>
-          <a href="" onClick={goTo}>
+          <a className="hover:text-purple-300" href="" onClick={goTo}>
             {user.username}
           </a>
         </td>

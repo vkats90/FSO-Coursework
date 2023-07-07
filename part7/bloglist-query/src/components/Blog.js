@@ -16,13 +16,15 @@ const Blog = ({ blog }) => {
   }
 
   return (
-    <div style={blogStyle} className="blog_title">
-      <a href="" onClick={handleClick}>
+    <div className="blog_title border border-gray-200 rounded-md p-2 w-96 m-2 bg-white transition-opacity ease-in duration-700 opacity-100">
+      <a
+        className="hover:text-purple-300 hover:border-purple-300 hover: transition duration-150"
+        href=""
+        onClick={handleClick}
+      >
         {blog.title}
       </a>{' '}
-      <span style={{ fontStyle: 'italic', color: 'gray' }} className="blog_author">
-        -{blog.author}{' '}
-      </span>
+      <span className="blog_author italic text-gray-400">- {blog.author} </span>
     </div>
   )
 }

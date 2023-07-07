@@ -10,8 +10,8 @@ const Users = () => {
   console.log(users)
 
   return (
-    <div>
-      <h2>Users</h2>
+    <div className="w-max bg-gradient-to-b from-white to-purple-50 border-2 border-purple-200 m-8 p-5 rounded-lg pb-10">
+      <h2 className="text-3xl py-5 font-bold text-purple-800">Users</h2>
       {users.isLoading ? (
         <p>Loading...</p>
       ) : users.isError ? (
@@ -19,9 +19,9 @@ const Users = () => {
       ) : (
         <table>
           <thead>
-            <tr>
-              <th width="200">username</th>
-              <th>blogs created</th>
+            <tr className="text-purple-600 text-left">
+              <th width="200">Username</th>
+              <th width="200">blogs</th>
             </tr>
           </thead>
 

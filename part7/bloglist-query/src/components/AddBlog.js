@@ -38,36 +38,41 @@ const AddBlog = ({ toggleForm }) => {
     <form onSubmit={createBlog}>
       <h3>Add a new blog:</h3>
       <div>
-        Title:
         <input
           type="text"
           value={title}
           name="Title"
           onChange={({ target }) => setTitle(target.value)}
-          placeholder="blog title"
+          placeholder="Title"
+          className="border rounded-md text-center m-1"
         />
       </div>
       <div>
-        Author:
         <input
           type="text"
           value={author}
           name="Author"
           onChange={({ target }) => setAuthor(target.value)}
-          placeholder="author name"
+          placeholder="Author"
+          className="border rounded-md text-center m-1"
         />
       </div>
       <div>
-        URL:
         <input
           type="text"
           value={url}
           name="URL"
           onChange={({ target }) => setUrl(target.value)}
-          placeholder="link to blog"
+          placeholder="URL"
+          className="border rounded-md text-center m-1"
         />
       </div>
-      <button type="submit">Submit</button>
+      <button
+        className=" hover:text-purple-300  hover:border-purple-300 transition duration-150 font-medium border rounded-md p-1 px-3"
+        type="submit"
+      >
+        Submit
+      </button>
     </form>
   )
 }

@@ -21,9 +21,9 @@ const Blogs = () => {
   }
 
   return (
-    <div>
-      <h2 className="text-3xl font-bold text-red-800">Blogs</h2>
-      <Toggable text="Add a note" ref={noteFormRef}>
+    <div className="w-max bg-gradient-to-b from-white to-purple-50 border-2 border-purple-200 m-8 p-5 rounded-lg pb-10">
+      <h2 className="text-3xl py-5 font-bold text-purple-800 ">Blogs</h2>
+      <Toggable className="" text="New blog" ref={noteFormRef}>
         <AddBlog toggleForm={toggleForm} />
       </Toggable>
       <br />

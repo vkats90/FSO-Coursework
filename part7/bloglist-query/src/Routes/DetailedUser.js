@@ -14,12 +14,14 @@ const DetailedUser = () => {
   console.log(user)
 
   return (
-    <div>
-      <h2>{user.name}</h2>
-      <h3>added blogs</h3>
-      <ul>
+    <div className="relative blog_url_likes w-max bg-gradient-to-b from-white to-purple-50 border-2 border-purple-200 m-8 p-5 rounded-lg">
+      <h2 className="text-2xl py-5 font-bold text-purple-800">{user.name}</h2>
+      <h3 className="py-3">added blogs:</h3>
+      <ul className="p-3">
         {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
+          <li className="list-disc list-inside text-gray-500" key={blog.id}>
+            {blog.title}
+          </li>
         ))}
       </ul>
     </div>
