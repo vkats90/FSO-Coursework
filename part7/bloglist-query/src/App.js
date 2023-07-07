@@ -2,11 +2,14 @@ import { useEffect, useContext } from 'react'
 import Users from './Routes/Users'
 import Blogs from './Routes/Blogs'
 import DetailedUser from './Routes/DetailedUser.js'
+import DetailedBlog from './Routes/DetailedBlog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Context from './Context'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+
+const headerStyle = { padding: 5 }
 
 const App = () => {
   const [notification, setMessage, user, setUser] = useContext(Context)
@@ -26,17 +29,33 @@ const App = () => {
   }
 
   return (
-    <Router>
+    <Router stlye={{ width: '100%' }}>
+      <div style={{ width: '100%', background: 'darkgray', padding: 5 }}>
+        <Link style={headerStyle} to="/">
+          Blogs
+        </Link>
+        <Link style={headerStyle} to="/users">
+          Users
+        </Link>
+        {user && (
+          <span>
+            <span style={headerStyle}>Welcome back {user.name}</span>!
+            <button style={headerStyle} onClick={handleLogout}>
+              Logout
+            </button>
+          </span>
+        )}
+      </div>
+
       {notification.message && <Notification />}
       {!user && <LoginForm />}
       {user && (
         <div>
-          <h3>Welcome back {user.name}!</h3>
-          <button onClick={handleLogout}>Logout</button>
           <Routes>
             <Route path="/" element={<Blogs />} />
             <Route path="/users" element={<Users />} />
             <Route path="/users/:id" element={<DetailedUser />} />
+            <Route path="/blogs/:id" element={<DetailedBlog />} />
           </Routes>
         </div>
       )}
