@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import { NotificationContextProvider } from './Context'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import './index.css'
 
 const queryClient = new QueryClient()
 

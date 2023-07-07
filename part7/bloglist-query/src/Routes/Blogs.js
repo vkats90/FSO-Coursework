@@ -22,7 +22,7 @@ const Blogs = () => {
 
   return (
     <div>
-      <h2>Blogs</h2>
+      <h2 className="text-3xl font-bold text-red-800">Blogs</h2>
       <Toggable text="Add a note" ref={noteFormRef}>
         <AddBlog toggleForm={toggleForm} />
       </Toggable>
