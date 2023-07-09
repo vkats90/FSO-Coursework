@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@animxyz/core": "^0.6.6",
     "@heroicons/react": "^2.0.18",
     "axios": "^1.2.3",
     "prop-types": "^15.8.1",
