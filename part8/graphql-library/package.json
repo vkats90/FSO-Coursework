@@ -1,0 +1,15 @@
+{
+  "name": "graphql-library",
+  "version": "1.0.0",
+  "description": "a GraphQL backend for a library app",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "vlad kats",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.7.5",
+    "graphql": "^16.7.1"
+  }
+}
