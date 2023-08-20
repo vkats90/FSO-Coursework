@@ -4,13 +4,21 @@
   "description": "a GraphQL backend for a library app",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "test": "test"
   },
   "author": "vlad kats",
   "license": "ISC",
   "dependencies": {
     "@apollo/server": "^4.7.5",
-    "graphql": "^16.7.1"
+    "dotenv": "^16.3.1",
+    "graphql": "^16.7.1",
+    "mongoose": "^7.3.4",
+    "mongoose-unique-validator": "^4.0.0"
+  },
+  "devDependencies": {
+    "install": "^0.13.0",
+    "nodemon": "^3.0.1",
+    "npm": "^9.8.1"
   }
 }
