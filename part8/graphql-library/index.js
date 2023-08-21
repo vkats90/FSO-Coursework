@@ -148,12 +148,11 @@ const resolvers = {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
-      const books = await Book.find({})
-      console.log(books)
-      return books
-      //  if (args.author) filteredBooks = filteredBooks.filter((b) => b.author === args.author)
-      //  if (args.genre) filteredBooks = filteredBooks.filter((b) => b.genres.includes(args.genre))
-      //  return filteredBooks
+      const books = await Book.find({}).populate('author')
+      let filteredBooks = books
+      if (args.author) filteredBooks = filteredBooks.filter((b) => b.author.name === args.author)
+      if (args.genre) filteredBooks = filteredBooks.filter((b) => b.genres.includes(args.genre))
+      return filteredBooks
     },
     allAuthors: async () => await Author.find({}),
   },
@@ -176,7 +175,7 @@ const resolvers = {
         throw new GraphQLError('Saving author failed', {
           extensions: {
             code: 'BAD_USER_INPUT',
-            invalidArgs: args,
+            invalidArgs: args.name,
             error,
           },
         })
@@ -193,7 +192,7 @@ const resolvers = {
         throw new GraphQLError('Saving book failed', {
           extensions: {
             code: 'BAD_USER_INPUT',
-            invalidArgs: args,
+            invalidArgs: args.title,
             error,
           },
         })
@@ -210,7 +209,7 @@ const resolvers = {
           { new: true }
         )
       } catch (error) {
-        throw new GraphQLError('Saving number failed', {
+        throw new GraphQLError('Saving author failed', {
           extensions: {
             code: 'BAD_USER_INPUT',
             invalidArgs: args.setBornTo,
