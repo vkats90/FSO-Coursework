@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
+import Recomended from './components/Recomended'
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom'
 import LoginForm from './components/LoginForm'
 import { useApolloClient } from '@apollo/client'
@@ -62,6 +63,17 @@ const App = () => {
           >
             add book
           </NavLink>
+          <NavLink
+            style={({ isActive, isPending }) => {
+              return {
+                display: isActive ? 'none' : '',
+                padding: 5,
+              }
+            }}
+            to="/recomended"
+          >
+            Recommended
+          </NavLink>
           <button onClick={logout}>logout</button>
         </nav>
 
@@ -69,6 +81,7 @@ const App = () => {
           <Route path="/" element={<Authors />} />
           <Route path="/books" element={<Books />} />
           <Route path="/newbook" element={<NewBook />} />
+          <Route path="/recomended" element={<Recomended />} />
         </Routes>
       </div>
     </Router>
