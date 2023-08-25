@@ -82,8 +82,8 @@ type Mutation {
 
 const resolvers = {
   Query: {
-    me: () => {
-      currentUser
+    me: (root, args, { currentUser }) => {
+      return currentUser
     },
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
