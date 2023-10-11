@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { GraphQLError } = require('graphql')
+const { PubSub } = require('graphql-subscriptions')
+const pubsub = new PubSub()
 
 const Author = require('./models/author')
 const Book = require('./models/book')
@@ -58,7 +60,9 @@ const resolvers = {
       if (!author) author = await Author.create({ name: args.author })
       try {
         const book = new Book({ ...args, author: author._id })
-        return book.save()
+        await book.save()
+        pubsub.publish('BOOK_ADDED', { bookAdded: book })
+        return book
       } catch (error) {
         throw new GraphQLError('Saving book failed', {
           extensions: {
@@ -130,6 +134,11 @@ const resolvers = {
         id: user._id,
       }
       return { value: jwt.sign(tokenUser, process.env.JWT_SECRET, { expiresIn: 60 * 60 }) }
+    },
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator('BOOK_ADDED'),
     },
   },
 }
