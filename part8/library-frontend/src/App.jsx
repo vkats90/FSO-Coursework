@@ -5,11 +5,18 @@ import NewBook from './components/NewBook'
 import Recomended from './components/Recomended'
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom'
 import LoginForm from './components/LoginForm'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
+import { BOOK_ADDED } from './queries'
 
 const App = () => {
   const [token, setToken] = useState(null)
   const client = useApolloClient()
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      window.alert(`A new book was added: ${data.data.bookAdded.title}`)
+    },
+  })
 
   const logout = () => {
     setToken(null)
