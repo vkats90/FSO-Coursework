@@ -22,7 +22,9 @@ const resolvers = {
       if (args.genre) filteredBooks = filteredBooks.filter((b) => b.genres.includes(args.genre))
       return filteredBooks
     },
-    allAuthors: async () => await Author.find({}),
+    allAuthors: async () => {
+      return await Author.find({})
+    },
   },
   Book: {
     author: async (root) => {
@@ -30,8 +32,10 @@ const resolvers = {
     },
   },
   Author: {
-    bookCount: async (root) => {
-      return Book.countDocuments({ author: root.id })
+    bookCount: async (root, args, { books }) => {
+      return books ? books.filter((b) => b.author.name === root.name).length : 0
+      // old solution below, new solution above to solve n+1 problem
+      //return Book.countDocuments({ author: root.id })
     },
   },
   Mutation: {

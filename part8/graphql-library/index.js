@@ -7,6 +7,7 @@ const cors = require('cors')
 const http = require('http')
 const { WebSocketServer } = require('ws')
 const { useServer } = require('graphql-ws/lib/use/ws')
+const Book = require('./models/book')
 
 const jwt = require('jsonwebtoken')
 const typeDefs = require('./schema')
@@ -70,7 +71,8 @@ const start = async () => {
         if (auth && auth.startsWith('Bearer ')) {
           const decodedToken = jwt.verify(auth.substring(7), process.env.JWT_SECRET)
           const currentUser = await User.findById(decodedToken.id)
-          return { currentUser }
+          const books = await Book.find({}).populate('author')
+          return { currentUser, books }
         }
       },
     })
