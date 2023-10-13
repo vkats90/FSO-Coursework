@@ -1,0 +1,15 @@
+{
+  "name": "ts-exercises",
+  "version": "1.0.0",
+  "description": "exercises for part 9 of the FSO course",
+  "main": "index.js",
+  "scripts": {
+    "ts-node": "ts-node",
+    "calculateBmi": "ts-node bmiCalculator"
+  },
+  "author": "Vlad Kats",
+  "license": "ISC",
+  "prettier": {
+    "semi": true
+  }
+}
