@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "ts-node": "ts-node",
-    "calculateBmi": "ts-node bmiCalculator"
+    "calculateBmi": "ts-node bmiCalculator",
+    "calculateExercises": "ts-node exerciseCalculator"
   },
   "author": "Vlad Kats",
   "license": "ISC",
