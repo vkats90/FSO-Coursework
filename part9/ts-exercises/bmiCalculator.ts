@@ -1,3 +1,5 @@
+import { errorHandler } from "./util";
+
 const calculateBmi = (height: number, weight: number): string => {
   let bmi: number = weight / ((height / 100) ^ 2);
   switch (true) {
@@ -20,4 +22,11 @@ const calculateBmi = (height: number, weight: number): string => {
   }
 };
 
-console.log(calculateBmi(180, 74));
+let args: number[] = process.argv.slice(2).map((x) => Number(x));
+try {
+  errorHandler(args);
+  if (args.length !== 2) throw new Error("Provide 2 arguments");
+  console.log(calculateBmi(args[0], args[1]));
+} catch (error: unknown) {
+  if (error instanceof Error) console.log(error.message);
+}

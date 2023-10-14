@@ -12,5 +12,8 @@
   "license": "ISC",
   "prettier": {
     "semi": true
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.6"
   }
 }
