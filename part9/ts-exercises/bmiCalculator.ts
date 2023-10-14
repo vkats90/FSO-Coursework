@@ -1,6 +1,6 @@
 import { errorHandler } from "./util";
 
-const calculateBmi = (height: number, weight: number): string => {
+export const calculateBmi = (height: number, weight: number): string => {
   let bmi: number = weight / ((height / 100) ^ 2);
   switch (true) {
     case bmi < 16:
@@ -19,6 +19,8 @@ const calculateBmi = (height: number, weight: number): string => {
       return "Obese (Class II)";
     case bmi >= 40:
       return "Obese (Class III)";
+    default:
+      return "unknown";
   }
 };
 
