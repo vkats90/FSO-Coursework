@@ -1,7 +1,5 @@
-import { errorHandler } from "./util";
-
 export const calculateBmi = (height: number, weight: number): string => {
-  let bmi: number = weight / ((height / 100) ^ 2);
+  const bmi: number = weight / ((height / 100) ^ 2);
   switch (true) {
     case bmi < 16:
       return "Underweight (Severe thinness)";
@@ -23,12 +21,3 @@ export const calculateBmi = (height: number, weight: number): string => {
       return "unknown";
   }
 };
-
-let args: number[] = process.argv.slice(2).map((x) => Number(x));
-try {
-  errorHandler(args);
-  if (args.length !== 2) throw new Error("Provide 2 arguments");
-  console.log(calculateBmi(args[0], args[1]));
-} catch (error: unknown) {
-  if (error instanceof Error) console.log(error.message);
-}
