@@ -2,17 +2,13 @@ import express from 'express'
 import diaryService from '../services/diaryService'
 import toNewDiaryEntry from '../utils'
 
-const router = express.Router()
+const diaryRouter = express.Router()
 
-router.get('/', (_req, res) => {
+diaryRouter.get('/', (_req, res) => {
   res.send(diaryService.getNonSensitiveEntries())
 })
 
-router.post('/', (_req, res) => {
-  res.send('Saving a diary!')
-})
-
-router.get('/:id', (req, res) => {
+diaryRouter.get('/:id', (req, res) => {
   const diary = diaryService.findById(Number(req.params.id))
 
   if (diary) {
@@ -22,10 +18,9 @@ router.get('/:id', (req, res) => {
   }
 })
 
-router.post('/', (req, res) => {
+diaryRouter.post('/', (req, res) => {
   try {
     const newDiaryEntry = toNewDiaryEntry(req.body)
-
     const addedEntry = diaryService.addDiary(newDiaryEntry)
     res.json(addedEntry)
   } catch (error: unknown) {
@@ -37,4 +32,4 @@ router.post('/', (req, res) => {
   }
 })
 
-export default router
+export default diaryRouter
