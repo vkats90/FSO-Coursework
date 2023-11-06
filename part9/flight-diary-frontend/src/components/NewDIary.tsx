@@ -41,7 +41,7 @@ const NewDiary = () => {
       <form onSubmit={handleSubmit}>
         <label htmlFor="date">Date: </label>
         <input
-          type="text"
+          type="date"
           value={date}
           placeholder="enter entry date"
           onChange={({ target }) => setDate(target.value)}
