@@ -10,6 +10,14 @@ export const getDiaries = async () => {
 }
 
 export const addNewEntry = async (newEntry: NewDiaryEntry) => {
-  let addedEntry = await axios.post<Diary>(baseURL, newEntry)
-  console.log(addedEntry.data)
+  try {
+    let addedEntry = await axios.post<Diary>(baseURL, newEntry)
+    console.log(addedEntry.data)
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.response?.data
+    } else {
+      console.error(error)
+    }
+  }
 }

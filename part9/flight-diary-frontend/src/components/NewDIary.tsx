@@ -1,14 +1,17 @@
 import { addNewEntry } from '../services/diaryService'
 import { NewDiaryEntry, Weather, Visibility } from '../types'
 import { useState } from 'react'
+import MessageContext from '../context'
+import { useContext } from 'react'
 
 const NewDiary = () => {
   const [date, setDate] = useState('')
   const [visibility, setVisibility] = useState<Visibility>(Visibility.Great)
   const [weather, setWeather] = useState<Weather>(Weather.Sunny)
   const [comment, setComment] = useState('')
+  const { setMessage, setColor } = useContext(MessageContext)
 
-  const handleSubmit = (event: React.SyntheticEvent) => {
+  const handleSubmit = async (event: React.SyntheticEvent) => {
     if (!date) alert('Must add date')
     event.preventDefault()
     const newEntry: NewDiaryEntry = {
@@ -17,7 +20,17 @@ const NewDiary = () => {
       weather: weather,
       comment,
     }
-    addNewEntry(newEntry).then((_res) => alert('added new entry'))
+    let res = await addNewEntry(newEntry)
+    if (!res) {
+      setMessage('added new entry for date: ' + newEntry.date)
+      setColor('green')
+      setTimeout(() => setMessage(''), 3000)
+    } else {
+      setMessage(res)
+      setColor('red')
+      setTimeout(() => setMessage(''), 3000)
+    }
+
     setDate('')
     setComment('')
   }
