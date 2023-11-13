@@ -12,15 +12,22 @@ const getNonSensitivePatients = (): NonSensitivePatientEntry[] => {
   }))
 }
 
+const getOnePatient = (patientId: string): PatientEntry | null => {
+  let patient = patientsData.filter(({ id }) => id === patientId)[0]
+  if (patient && !patient.entries) patient = { ...patient, entries: [] }
+  return patient
+}
+
 const addNewPatient = ({
   name,
   dateOfBirth,
   gender,
   occupation,
   ssn,
+  entries,
 }: NewPatientEntry): PatientEntry => {
   const id = uuid()
-  return { name, dateOfBirth, gender, occupation, ssn, id }
+  return { name, dateOfBirth, gender, occupation, ssn, id, entries }
 }
 
-export default { getNonSensitivePatients, addNewPatient }
+export default { getNonSensitivePatients, addNewPatient, getOnePatient }

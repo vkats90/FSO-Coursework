@@ -22,4 +22,10 @@ patientRouter.post('/', (req, res) => {
   }
 })
 
+patientRouter.get('/:id', (req, res) => {
+  let id = req.params.id
+  let patient = patientsService.getOnePatient(id)
+  res.send(patient ? patient : 'No patient found')
+})
+
 export default patientRouter
