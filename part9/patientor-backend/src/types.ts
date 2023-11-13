@@ -20,7 +20,7 @@ export interface PatientEntry {
   ssn?: string
   gender: Gender
   occupation: string
-  entries: Entry[]
+  entries?: Entry[]
 }
 
 export type NonSensitivePatientEntry = Omit<PatientEntry, 'ssn' | 'entries'>
