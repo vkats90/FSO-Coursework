@@ -1,4 +1,4 @@
-import { NewPatientEntry, Gender } from './types'
+import { NewPatientEntry, Gender, Entry } from './types'
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String
@@ -52,6 +52,43 @@ const parseSSN = (ssn: unknown): string => {
   return ssn
 }
 
+function isEntry(entry: unknown): entry is Entry {
+  return (
+    !!entry &&
+    typeof entry === 'object' &&
+    'type' in entry &&
+    typeof (entry as Entry).type === 'string' &&
+    ((entry as Entry).type === 'HealthCheck' ||
+      (entry as Entry).type === 'Hospital' ||
+      (entry as Entry).type === 'OccupationalHealthcare') &&
+    Object.keys(entry as Entry).every((key) =>
+      [
+        'type',
+        'id',
+        'description',
+        'date',
+        'specialist',
+        'diagnosisCodes',
+        'healthCheckRating',
+        'discharge',
+        'sickLeave',
+        'employerName',
+      ].includes(key)
+    )
+  )
+}
+
+const parseEntry = (entries: unknown): Entry[] => {
+  if (entries instanceof Array) {
+    if (entries.length === 0) return entries
+    entries.map((entry) => {
+      if (!isEntry(entry)) throw new Error('Incorrect  Entry')
+    })
+  } else throw new Error('Incorrect Entry')
+
+  return entries
+}
+
 const toNewPatientEntry = (object: unknown): NewPatientEntry => {
   if (!object || typeof object !== 'object') {
     throw new Error('Incorrect or missing data')
@@ -62,7 +99,8 @@ const toNewPatientEntry = (object: unknown): NewPatientEntry => {
     'dateOfBirth' in object &&
     'ssn' in object &&
     'gender' in object &&
-    'occupation' in object
+    'occupation' in object &&
+    'entries' in object
   ) {
     const newEntry: NewPatientEntry = {
       gender: parseGender(object.gender),
@@ -70,6 +108,7 @@ const toNewPatientEntry = (object: unknown): NewPatientEntry => {
       dateOfBirth: parseDate(object.dateOfBirth),
       ssn: parseSSN(object.ssn),
       occupation: parseOccupation(object.occupation),
+      entries: parseEntry(object.entries),
     }
 
     return newEntry

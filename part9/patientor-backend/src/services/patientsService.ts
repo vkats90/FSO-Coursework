@@ -1,15 +1,25 @@
 import { NonSensitivePatientEntry, PatientEntry, NewPatientEntry } from '../types'
 import patientsData from '../../data/patients'
 import { v1 as uuid } from 'uuid'
+//  import { Entry } from '../types'
+
+/*const entryType = (entries:Entry[]) =>{
+  entries.map(e=>{
+    switch e.
+  })
+}*/
 
 const getNonSensitivePatients = (): NonSensitivePatientEntry[] => {
-  return patientsData.map(({ id, name, dateOfBirth, gender, occupation }) => ({
-    id,
-    name,
-    dateOfBirth,
-    gender,
-    occupation,
-  }))
+  return patientsData.map(({ id, name, dateOfBirth, gender, occupation, entries }) => {
+    return {
+      id,
+      name,
+      dateOfBirth,
+      gender,
+      occupation,
+      entries,
+    }
+  })
 }
 
 const getOnePatient = (patientId: string): PatientEntry | null => {
