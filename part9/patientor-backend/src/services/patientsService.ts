@@ -24,8 +24,7 @@ const getNonSensitivePatients = (): NonSensitivePatientEntry[] => {
 
 const getOnePatient = (patientId: string): PatientEntry | null => {
   let patient = patientsData.filter(({ id }) => id === patientId)[0]
-  if (patient && !patient.entries) patient = { ...patient, entries: [] }
-  else throw new Error('Not Found')
+  if (!patient) throw new Error('Not Found')
   return patient
 }
 
