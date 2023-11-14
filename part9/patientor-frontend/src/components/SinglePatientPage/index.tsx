@@ -28,7 +28,7 @@ const SinglePatientPage = () => {
 
   return (
     <Box style={{ margin: '20px' }}>
-      <Card variant="outlined" sx={{ maxWidth: 400 }}>
+      <Card variant="outlined" sx={{ maxWidth: 500 }}>
         <PatientCard patient={patient as Patient} />
       </Card>
     </Box>
