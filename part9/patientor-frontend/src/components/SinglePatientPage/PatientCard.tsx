@@ -1,18 +1,11 @@
-import {
-  Typography,
-  CardContent,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Divider,
-} from '@mui/material'
+import { Typography, CardContent, List } from '@mui/material'
 import * as React from 'react'
 import { Diagnosis, Patient } from '../../types'
 import FemaleIcon from '@mui/icons-material/Female'
 import MaleIcon from '@mui/icons-material/Male'
 import TransgenderIcon from '@mui/icons-material/Transgender'
-import AssignmentIcon from '@mui/icons-material/Assignment'
+
+import EntryCard from './EntryCard'
 
 const PatientCard = ({ patient, diagnoses }: { patient: Patient; diagnoses: Diagnosis[] }) => (
   <React.Fragment>
@@ -44,39 +37,7 @@ const PatientCard = ({ patient, diagnoses }: { patient: Patient; diagnoses: Diag
           </Typography>
           <List sx={{ maxWidth: 500 }}>
             {patient.entries.map((e) => (
-              <div key={'key-' + e.id}>
-                <ListItem>
-                  <ListItemIcon>
-                    <AssignmentIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={e.date}
-                    secondary={
-                      <React.Fragment>
-                        {e.description}
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          color="text.primary"
-                        ></Typography>
-                      </React.Fragment>
-                    }
-                  />
-                </ListItem>
-                <ListItem>
-                  <List dense={true}>
-                    {e.diagnosisCodes?.map((dc) => (
-                      <ListItem key={'key-' + dc}>
-                        <ListItemText>
-                          {dc} -{' '}
-                          <i>{diagnoses?.filter((dia): boolean => dia.code === dc)[0].name}</i>
-                        </ListItemText>
-                      </ListItem>
-                    ))}
-                  </List>
-                </ListItem>
-                <Divider variant="inset" component="li" />
-              </div>
+              <EntryCard diagnoses={diagnoses} entry={e} key={'key-' + e.id} />
             ))}
           </List>
         </div>
