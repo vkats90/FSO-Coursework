@@ -1,12 +1,20 @@
-import { Typography, CardContent, List, ListItem, ListItemText, ListItemIcon } from '@mui/material'
+import {
+  Typography,
+  CardContent,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Divider,
+} from '@mui/material'
 import * as React from 'react'
-import { Patient } from '../../types'
+import { Diagnosis, Patient } from '../../types'
 import FemaleIcon from '@mui/icons-material/Female'
 import MaleIcon from '@mui/icons-material/Male'
 import TransgenderIcon from '@mui/icons-material/Transgender'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 
-const PatientCard = ({ patient }: { patient: Patient }) => (
+const PatientCard = ({ patient, diagnoses }: { patient: Patient; diagnoses: Diagnosis[] }) => (
   <React.Fragment>
     <CardContent>
       <Typography variant="h4" component="div" sx={{ marginBottom: 2 }}>
@@ -34,7 +42,7 @@ const PatientCard = ({ patient }: { patient: Patient }) => (
           <Typography variant="h5" component="div" sx={{ marginTop: 2 }}>
             Entries:
           </Typography>
-          <List>
+          <List sx={{ maxWidth: 500 }}>
             {patient.entries.map((e) => (
               <div key={'key-' + e.id}>
                 <ListItem>
@@ -54,12 +62,20 @@ const PatientCard = ({ patient }: { patient: Patient }) => (
                       </React.Fragment>
                     }
                   />
-                  <ul>
-                    {e.diagnosisCodes?.map((dc) => (
-                      <li key={'key-' + dc}>{dc}</li>
-                    ))}
-                  </ul>
                 </ListItem>
+                <ListItem>
+                  <List dense={true}>
+                    {e.diagnosisCodes?.map((dc) => (
+                      <ListItem key={'key-' + dc}>
+                        <ListItemText>
+                          {dc} -{' '}
+                          <i>{diagnoses?.filter((dia): boolean => dia.code === dc)[0].name}</i>
+                        </ListItemText>
+                      </ListItem>
+                    ))}
+                  </List>
+                </ListItem>
+                <Divider variant="inset" component="li" />
               </div>
             ))}
           </List>
