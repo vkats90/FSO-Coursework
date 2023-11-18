@@ -1,4 +1,10 @@
-import { NonSensitivePatientEntry, PatientEntry, NewPatientEntry, Entry } from '../types'
+import {
+  NonSensitivePatientEntry,
+  PatientEntry,
+  NewPatientEntry,
+  Entry,
+  EntryWithoutId,
+} from '../types'
 import patientsData from '../../data/patients'
 import { v1 as uuid } from 'uuid'
 import { isEntry } from '../utils'
@@ -34,8 +40,9 @@ const addNewPatient = ({
   return { name, dateOfBirth, gender, occupation, ssn, id, entries }
 }
 
-const addNewEntry = (entry: Entry): Entry => {
-  return isEntry(entry)
+const addNewEntry = (entry: EntryWithoutId): Entry => {
+  const id = uuid()
+  return isEntry({ ...entry, id })
 }
 
 export default { getNonSensitivePatients, addNewPatient, getOnePatient, addNewEntry }

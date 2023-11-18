@@ -1,6 +1,7 @@
 import express from 'express'
 import patientsService from '../services/patientsService'
 import toNewPatientEntry from '../utils'
+import { EntryWithoutId } from '../types'
 
 const patientRouter = express.Router()
 
@@ -30,7 +31,7 @@ patientRouter.get('/:id', (req, res) => {
 
 patientRouter.post('/:id/entries', (req, res) => {
   try {
-    let entry = req.body
+    let entry: EntryWithoutId = req.body
     let addedEntry = patientsService.addNewEntry(entry)
     res.send(addedEntry)
   } catch (error: unknown) {
