@@ -1,13 +1,7 @@
-import { NonSensitivePatientEntry, PatientEntry, NewPatientEntry } from '../types'
+import { NonSensitivePatientEntry, PatientEntry, NewPatientEntry, Entry } from '../types'
 import patientsData from '../../data/patients'
 import { v1 as uuid } from 'uuid'
-//  import { Entry } from '../types'
-
-/*const entryType = (entries:Entry[]) =>{
-  entries.map(e=>{
-    switch e.
-  })
-}*/
+import { isEntry } from '../utils'
 
 const getNonSensitivePatients = (): NonSensitivePatientEntry[] => {
   return patientsData.map(({ id, name, dateOfBirth, gender, occupation, entries }) => {
@@ -24,7 +18,7 @@ const getNonSensitivePatients = (): NonSensitivePatientEntry[] => {
 
 const getOnePatient = (patientId: string): PatientEntry | null => {
   let patient = patientsData.filter(({ id }) => id === patientId)[0]
-  if (!patient) throw new Error('Not Found')
+  if (!patient) throw new Error('Patient Not Found')
   return patient
 }
 
@@ -40,4 +34,8 @@ const addNewPatient = ({
   return { name, dateOfBirth, gender, occupation, ssn, id, entries }
 }
 
-export default { getNonSensitivePatients, addNewPatient, getOnePatient }
+const addNewEntry = (entry: Entry): Entry => {
+  return isEntry(entry)
+}
+
+export default { getNonSensitivePatients, addNewPatient, getOnePatient, addNewEntry }
