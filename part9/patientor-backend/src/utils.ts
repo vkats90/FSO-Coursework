@@ -8,6 +8,7 @@ import {
   HospitalEntry,
   OccupationalHealthcareEntry,
 } from './types'
+import diagnosisData from '../data/diagnoses'
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String
@@ -114,9 +115,12 @@ const parseDischarge = (object: unknown): { date: string; criteria: string } => 
 
 const parseDiagnosisCodes = (object: unknown): Array<Diagnosis['code']> => {
   if (!object || typeof object !== 'object' || !('diagnosisCodes' in object)) {
-    // we will just trust the data to be in correct form
     return [] as Array<Diagnosis['code']>
   }
+  let diagnosisCodes = diagnosisData.map((e) => e.code)
+  ;(object.diagnosisCodes as string[]).map((d: string) => {
+    if (!diagnosisCodes.includes(d)) throw new Error('Diagnosis code does not exist')
+  })
 
   return object.diagnosisCodes as Array<Diagnosis['code']>
 }
