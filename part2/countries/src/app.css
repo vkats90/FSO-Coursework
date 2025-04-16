@@ -1,0 +1,57 @@
+h1 {
+  text-decoration: underline;
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+}
+
+html {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#main {
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.lineItem {
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 2px;
+  margin: 2px;
+  color: black;
+  background: orange;
+  cursor: pointer;
+}
+
+.lineItem:hover {
+  background-color: lightsalmon;
+}
+
+ul {
+  list-style-type: none;
+  width: 50%;
+  margin: auto;
+  text-align: center;
+}
+input {
+  font-size: large;
+  padding: 5px;
+  border: 2px solid orange;
+  border-radius: 5px;
+}
+
+.search {
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.singleCountry {
+  border: 2px solid orange;
+  border-radius: 10px;
+}
