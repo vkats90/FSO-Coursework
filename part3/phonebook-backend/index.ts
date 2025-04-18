@@ -1,7 +1,7 @@
 import express from 'express'
-import { Person } from './types'
+import cors from 'cors'
 const morgan = require('morgan')
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 
 let db = [
   {
@@ -38,6 +38,7 @@ morgan.token('reqbody', (req: Request) => {
 })
 
 app.use(express.json())
+app.use(cors())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :reqbody'))
 
 app.get('/api/persons', (req, res) => {

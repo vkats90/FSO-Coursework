@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node dist/app.js",
+    "build:ui": "rm -rf dist && cd ../../part2/Phonebook && npm run build && cp -r dist ../../part3/phonebook-backend",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
+    "start": "node dist/index.html",
     "dev": "nodemon index.ts"
   },
   "keywords": [],
@@ -13,10 +15,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/node": "^22.14.1",
     "nodemon": "^3.1.9",
