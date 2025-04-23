@@ -7,7 +7,7 @@
     "build": "tsc",
     "build:ui": "rm -rf dist && cd ../../part2/Phonebook && npm run build && cp -r dist ../../part3/phonebook-backend",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
-    "start": "node dist/index.html",
+    "start": "node distBE/index.js",
     "dev": "nodemon index.ts"
   },
   "keywords": [],
