@@ -30,6 +30,8 @@ const AddNumber = ({ persons, setPersons, notification }: PropType) => {
             setPersons(persons.filter((x) => x.id != search.id))
           })
     else {
+      if (!newPerson.name || !newPerson.number)
+        return notification({ type: 'error', message: 'Missing a field, fill all fields' })
       personService
         .addNumber(newPerson)
         .then((_res) => notification({ type: 'success', message: 'Record added' }))
