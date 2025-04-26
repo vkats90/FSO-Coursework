@@ -4,9 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm i && tsc",
-    "build:ui": "rm -rf dist && cd ../../part2/Phonebook && npm run build && cp -r dist ../../part3/phonebook-backend",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
+    "build": "npm i && rm -rf distBE && tsc && npm run build:ui",
+    "build:ui": "rm -rf dist  && cd ../../part2/Phonebook && npm run build && cp -r dist ../../part3/phonebook-backend",
+    "deploy:full": "npm run build && git add . && git commit -m uibuild && git push",
     "start": "node distBE/index.js",
     "dev": "nodemon index.ts"
   },
