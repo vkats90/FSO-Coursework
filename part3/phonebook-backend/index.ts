@@ -4,7 +4,7 @@ const morgan = require('morgan')
 const PORT = process.env.PORT || 3001
 import { getAll, getOne, addOne, deleteOne, info } from './db/services'
 import { connect } from './db/connection'
-import { errorHandler } from './utils'
+import { errorHandler, unknownEndpoint } from './utils'
 
 connect()
 
@@ -32,6 +32,7 @@ app.put('/api/persons/:id', addOne)
 app.get('/info', info)
 
 app.use(errorHandler)
+app.use(unknownEndpoint)
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)

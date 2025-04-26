@@ -34,11 +34,16 @@ const AddNumber = ({ persons, setPersons, notification }: PropType) => {
         return notification({ type: 'error', message: 'Missing a field, fill all fields' })
       personService
         .addNumber(newPerson)
-        .then((_res) => notification({ type: 'success', message: 'Record added' }))
-        .catch((error) => console.log('error:', error))
-      setPersons((prev) => prev.concat(newPerson))
-      setNewName('')
-      setNewNumber('')
+        .then((res) => {
+          notification({ type: 'success', message: 'Record added' })
+          setPersons((prev) => prev.concat(res))
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch((error) => {
+          console.log('error:', error)
+          notification({ type: 'error', message: error.response.data.error })
+        })
     }
   }
 
