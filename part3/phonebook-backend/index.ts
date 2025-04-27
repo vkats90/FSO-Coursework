@@ -1,6 +1,6 @@
-import express from 'express'
+import express, { Request } from 'express'
 import cors from 'cors'
-const morgan = require('morgan')
+import morgan from 'morgan'
 const PORT = process.env.PORT || 3001
 import { getAll, getOne, addOne, deleteOne, info } from './db/services'
 import { connect } from './db/connection'
