@@ -1,11 +1,11 @@
 import { Router, Request, Response } from 'express'
 import { Blog } from '../models/blogs'
-import { error } from 'node:console'
+import { User } from '../models/users'
 
 export const blogRouter = Router()
 
 blogRouter.get('/', async (request: Request, response: Response) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find({}).populate('User')
   response.json(blogs)
 })
 
