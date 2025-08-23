@@ -6,7 +6,7 @@ import { error } from 'console'
 export const userRouter = Router()
 
 userRouter.get('/', async (req: Request, res: Response) => {
-  const users = await User.find({})
+  const users = await User.find({}).populate('blogs')
 
   res.json(users)
 })

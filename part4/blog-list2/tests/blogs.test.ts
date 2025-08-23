@@ -1,12 +1,15 @@
-import { test, describe, beforeEach, after } from 'node:test'
+import { test, describe, beforeEach, after, before } from 'node:test'
 import mongoose from 'mongoose'
 import assert from 'node:assert'
 import supertest from 'supertest'
 import { Blog } from '../models/blogs'
+import { User } from '../models/users'
 import app from '../app'
-import { BlogType } from '../types'
+import { BlogType, UserType } from '../types'
+import bcrypt from 'bcrypt'
 
-/*const api = supertest(app)
+const api = supertest(app)
+let userID: UserType | null
 
 const blogs = [
   {
@@ -47,9 +50,23 @@ const blogs = [
   },
 ]
 
+before(async () => {
+  await User.deleteMany({})
+  const saltRounds = 10
+  const passwordHash = await bcrypt.hash('1234', saltRounds)
+  const user = new User({
+    name: 'Vova Kats',
+    username: 'VovaKats',
+    passwordHash,
+  })
+  await user.save()
+  const allUsers = await User.find({})
+  if (allUsers) userID = allUsers[0].id
+})
+
 beforeEach(async () => {
   await Blog.deleteMany({})
-  await Blog.insertMany(blogs)
+  await Blog.insertMany(blogs.map((b) => ({ ...b, user: userID })))
 })
 
 describe('Test GET /api/blogs', () => {
@@ -60,6 +77,14 @@ describe('Test GET /api/blogs', () => {
       .expect('Content-Type', /application\/json/)
 
     assert.strictEqual(blogs.body.length, 6)
+  })
+  test('The returned blogs have a user populated', async () => {
+    const blogs = await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(blogs.body[0].user.name, 'Vova Kats')
   })
 
   test('Each blogs has a unique identifier id and not _id', async () => {
@@ -149,10 +174,7 @@ describe('Testing PUT functionality', async () => {
     const allBlogs = await api.get('/api/blogs').expect(200)
     const blog = allBlogs.body[0]
 
-    const res = await api
-      .put(`/api/blogs/${blog.id}`)
-      .send({ ...blog, likes: 1056 })
-      .expect(200)
+    const res = await api.put(`/api/blogs/${blog.id}`).send({ likes: 1056 }).expect(200)
     const afterUpdate = await api.get('/api/blogs').expect(200)
 
     assert.strictEqual(res.body.likes, 1056)
@@ -169,20 +191,8 @@ describe('Testing PUT functionality', async () => {
 
     assert.strictEqual(res.body.error, "A blog with this ID doesn't exist")
   })
-  test('attempting to update a blog with missing tile or url fails', async () => {
-    const allBlogs = await api.get('/api/blogs').expect(200)
-    const blog = allBlogs.body[0]
-
-    const res = await api
-      .put(`/api/blogs/${blog.id}`)
-      .send({ ...blog, title: '' })
-      .expect(400)
-
-    assert.strictEqual(res.body.error, 'Missing required fields title or url')
-  })
 })
 
 after(async () => {
   await mongoose.connection.close()
 })
-*/

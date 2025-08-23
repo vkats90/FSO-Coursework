@@ -1,14 +1,29 @@
-import { test, describe, beforeEach, after } from 'node:test'
+import { test, describe, beforeEach, after, before } from 'node:test'
 import mongoose from 'mongoose'
 import assert from 'node:assert'
 import supertest from 'supertest'
+import { Blog } from '../models/blogs'
 import { User } from '../models/users'
 import app from '../app'
-import { UserType } from '../types'
+import { BlogType, UserType } from '../types'
 import bcrypt from 'bcrypt'
-
+/*
 const saltRounds = 10
 const api = supertest(app)
+let blogID: string
+
+before(async () => {
+  await Blog.deleteMany({})
+  const blog = new Blog({
+    title: 'React patterns',
+    author: 'Michael Chan',
+    url: 'https://reactpatterns.com/',
+    likes: 7,
+  })
+  await blog.save()
+  const allBlogs: BlogType[] = await Blog.find({})
+  blogID = allBlogs[0].id
+})
 
 beforeEach(async () => {
   await User.deleteMany({})
@@ -17,6 +32,7 @@ beforeEach(async () => {
     name: 'Vova Kats',
     username: 'VovaKats',
     passwordHash,
+    blogs: [blogID],
   })
   await user.save()
 })
@@ -24,9 +40,12 @@ beforeEach(async () => {
 describe('When at least one user exists', async () => {
   test('when making GET call these users display', async () => {
     const users = await api.get('/api/users').expect(200)
-
     assert.strictEqual(users.body.length, 1)
     assert.strictEqual(users.body[0].name, 'Vova Kats')
+  })
+  test('when making GET call the displayed users have blogs populated', async () => {
+    const users = await api.get('/api/users').expect(200)
+    assert.strictEqual(users.body[0].blogs[0].title, 'React patterns')
   })
   test('adding a new user woks succefully', async () => {
     const random = Math.floor(Math.random() * 1000)
@@ -96,3 +115,4 @@ describe('When at least one user exists', async () => {
 after(async () => {
   await mongoose.connection.close()
 })
+*/

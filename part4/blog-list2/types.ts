@@ -14,5 +14,5 @@ export type UserType = {
   name: string
   username: string
   passwordHash: string
-  notes?: [mongoose.Types.ObjectId]
+  blogs?: [mongoose.Types.ObjectId]
 }
