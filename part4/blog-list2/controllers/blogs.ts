@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express'
 import { Blog } from '../models/blogs'
-import { User } from '../models/users'
+import middleware from '../utils/middleware'
+import { BlogType } from '../types'
 
 export const blogRouter = Router()
 
@@ -9,33 +10,40 @@ blogRouter.get('/', async (request: Request, response: Response) => {
   response.json(blogs)
 })
 
-blogRouter.post('/', async (request: Request, response: Response) => {
+blogRouter.post('/', middleware.userExtractor, async (request: Request, response: Response) => {
+  if (!request.user) response.json({ status: 401, error: 'Unauthorized' })
   const newBlog = request.body
   if (newBlog.likes == undefined) newBlog.likes = 0
   if (!newBlog.title || !newBlog.url)
     response.status(400).json({ error: 'Missing required fields title or url' })
 
-  const user = await User.find({})
-  const blog = new Blog({ ...request.body, user: user[0].id })
+  const blog = new Blog({ ...request.body, user: request.user.id })
 
   const result = await blog.save()
   response.status(201).json(result)
 })
 
-blogRouter.delete('/:id', async (request: Request, response: Response) => {
-  const id = request.params.id.toString()
-  const blog = await Blog.findById(id)
-  if (!blog) response.status(400).json({ error: "A blog with this ID doesn't exist" })
-  else {
-    await blog.deleteOne()
-    response.status(204).json(blog)
+blogRouter.delete(
+  '/:id',
+  middleware.userExtractor,
+  async (request: Request, response: Response) => {
+    if (!request.user) response.json({ status: 401, error: 'Unauthorized' })
+    const id = request.params.id.toString()
+    const blog: any = await Blog.findById(id).populate('user')
+    if (!blog) response.status(400).json({ error: "A blog with this ID doesn't exist" })
+    else if (blog.user.username !== request.user.username) {
+      response.json({ status: 401, error: 'Unauthorized' })
+    } else {
+      await blog.deleteOne()
+      response.status(204).json(blog)
+    }
   }
-})
+)
 
-blogRouter.put('/:id', async (request: Request, response: Response) => {
+blogRouter.put('/:id', middleware.userExtractor, async (request: Request, response: Response) => {
+  if (!request.user) response.json({ status: 401, error: 'Unauthorized' })
   const id = request.params.id.toString()
-  const user = await User.find({})
-  const newBlog = { ...request.body, user: user[0].id }
+  const newBlog = { ...request.body, user: request.user.id }
   const oldBlog: any = await Blog.findById(id)
   if (!oldBlog) response.status(400).json({ error: "A blog with this ID doesn't exist" })
   else {

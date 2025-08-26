@@ -50,6 +50,8 @@ const blogs = [
   },
 ]
 
+let token: string
+
 before(async () => {
   await User.deleteMany({})
   const saltRounds = 10
@@ -62,6 +64,8 @@ before(async () => {
   await user.save()
   const allUsers = await User.find({})
   if (allUsers) userID = allUsers[0].id
+  const res = await api.post('/api/login').send({ username: 'VovaKats', password: '1234' })
+  token = 'Bearer ' + res.body.token
 })
 
 beforeEach(async () => {
@@ -103,6 +107,7 @@ describe('Test POST /api/blogs', () => {
   test('sending POST adds the new post to the database', async () => {
     await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -114,6 +119,7 @@ describe('Test POST /api/blogs', () => {
   test('adding a blog without likes sets it to 0 by default', async () => {
     const blog = await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -124,11 +130,20 @@ describe('Test POST /api/blogs', () => {
   test('adding a blog without a title returns an error', async () => {
     const blog = await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send({ ...newBlog, title: undefined })
       .expect(400)
       .expect('Content-Type', /application\/json/)
 
     assert.strictEqual(blog.body.error, 'Missing required fields title or url')
+  })
+  test('attempting to add a post while not being logged in fails', async () => {
+    const blog = await api
+      .post('/api/blogs')
+      .send({ ...newBlog })
+      .expect(401)
+
+    assert.strictEqual(blog.body.error, 'Unauthorized')
   })
 })
 
@@ -136,12 +151,12 @@ describe('Test deleting blog functionality', async () => {
   test('deleting a blog is successful and returns the correct code', async () => {
     const allBlogs = await api.get('/api/blogs').expect(200)
     const blog: BlogType = allBlogs.body[0]
-    await api.delete(`/api/blogs/${blog.id}`).expect(204)
+    await api.delete(`/api/blogs/${blog.id}`).set('Authorization', token).expect(204)
   })
   test('deleting one blog actually decreses the quantity of blogs by one', async () => {
     const allBlogs = await api.get('/api/blogs').expect(200)
     const blog: BlogType = allBlogs.body[0]
-    await api.delete(`/api/blogs/${blog.id}`).expect(204)
+    await api.delete(`/api/blogs/${blog.id}`).set('Authorization', token).expect(204)
 
     const afterDelete = await api.get('/api/blogs').expect(200)
     assert.strictEqual(allBlogs.body.length - 1, afterDelete.body.length)
@@ -149,13 +164,16 @@ describe('Test deleting blog functionality', async () => {
   test('the deleted blog is actually missing from the blog list', async () => {
     const allBlogs = await api.get('/api/blogs').expect(200)
     const blog: BlogType = allBlogs.body[0]
-    await api.delete(`/api/blogs/${blog.id}`).expect(204)
+    await api.delete(`/api/blogs/${blog.id}`).set('Authorization', token).expect(204)
 
     const afterDelete = await api.get('/api/blogs').expect(200)
     assert.notStrictEqual(allBlogs.body[0].title, afterDelete.body[0].title)
   })
   test('trying to delete a blog with a non existing id returns code 400', async () => {
-    const res = await api.delete(`/api/blogs/6445e1150b5c1e38e25a7d3f`).expect(400)
+    const res = await api
+      .delete(`/api/blogs/6445e1150b5c1e38e25a7d3f`)
+      .set('Authorization', token)
+      .expect(400)
 
     assert.strictEqual(res.body.error, "A blog with this ID doesn't exist")
   })
@@ -167,6 +185,7 @@ describe('Testing PUT functionality', async () => {
     const blog = allBlogs.body[0]
     await api
       .put(`/api/blogs/${blog.id}`)
+      .set('Authorization', token)
       .send({ ...blog, likes: 1056 })
       .expect(200)
   })
@@ -174,7 +193,11 @@ describe('Testing PUT functionality', async () => {
     const allBlogs = await api.get('/api/blogs').expect(200)
     const blog = allBlogs.body[0]
 
-    const res = await api.put(`/api/blogs/${blog.id}`).send({ likes: 1056 }).expect(200)
+    const res = await api
+      .put(`/api/blogs/${blog.id}`)
+      .set('Authorization', token)
+      .send({ likes: 1056 })
+      .expect(200)
     const afterUpdate = await api.get('/api/blogs').expect(200)
 
     assert.strictEqual(res.body.likes, 1056)
@@ -186,6 +209,7 @@ describe('Testing PUT functionality', async () => {
 
     const res = await api
       .put(`/api/blogs/644da217d980a751150b50c0`)
+      .set('Authorization', token)
       .send({ ...blog, likes: 1056 })
       .expect(400)
 

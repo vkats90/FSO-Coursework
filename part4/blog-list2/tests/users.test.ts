@@ -112,6 +112,37 @@ describe('When at least one user exists', async () => {
   })
 })
 
+describe('testing login functionality', async () => {
+  test('trying to log in with the correct username and password works', async () => {
+    await api.post('/api/login').send({ username: 'VovaKats', password: '1234' }).expect(200)
+  })
+  test('loging in actually returns a token', async () => {
+    const res = await api
+      .post('/api/login')
+      .send({ username: 'VovaKats', password: '1234' })
+      .expect(200)
+
+    assert.notStrictEqual(res.body.token, '')
+    assert.strictEqual(res.body.username, 'VovaKats')
+  })
+  test('trying to log in with the wrong username fails', async () => {
+    const res = await api
+      .post('/api/login')
+      .send({ username: 'WrongName', password: '1234' })
+      .expect(400)
+
+    assert.strictEqual(res.body.error, "A user with this username doesn't exist")
+  })
+  test('trying to log in with the wrong password fails', async () => {
+    const res = await api
+      .post('/api/login')
+      .send({ username: 'VovaKats', password: '123' })
+      .expect(400)
+
+    assert.strictEqual(res.body.error, 'password is incorrect')
+  })
+})
+
 after(async () => {
   await mongoose.connection.close()
 })

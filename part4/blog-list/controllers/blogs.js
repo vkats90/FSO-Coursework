@@ -1,10 +1,10 @@
 const blogRouter = require('express').Router()
-const Blog = require('../models/blog')
-const { userExtract } = require('../utils/middleware')
+import Blog, { find, findById, findByIdAndRemove, findByIdAndUpdate } from '../models/blog'
+import { userExtract } from '../utils/middleware'
 
 blogRouter.get('/', async (request, response, next) => {
   try {
-    const blogs = await Blog.find({}).populate('user', {
+    const blogs = await find({}).populate('user', {
       username: 1,
       name: 1,
     })
@@ -33,14 +33,14 @@ blogRouter.post('/', userExtract, async (request, response, next) => {
 blogRouter.delete('/:id', userExtract, async (request, response, next) => {
   try {
     const user = request.user
-    const blog = await Blog.findById(request.params.id)
+    const blog = await findById(request.params.id)
     if (!blog) {
       return response.status(400).json({ error: 'blog with this id does not exist' })
     }
     if (blog.user.toString() !== user.id.toString()) {
       return response.status(401).json({ error: 'unauthorized, you did not create this blog' })
     }
-    await Blog.findByIdAndRemove(request.params.id)
+    await findByIdAndRemove(request.params.id)
     response.status(204).json({ success: `Blog ${request.params.id} removed` })
   } catch (error) {
     next(error)
@@ -50,7 +50,7 @@ blogRouter.delete('/:id', userExtract, async (request, response, next) => {
 blogRouter.put('/:id', userExtract, async (request, response, next) => {
   try {
     const { title, author, url, likes, comments } = request.body
-    const blog = await Blog.findByIdAndUpdate(
+    const blog = await findByIdAndUpdate(
       request.params.id,
       { title, author, url, likes, comments },
       {
@@ -65,4 +65,4 @@ blogRouter.put('/:id', userExtract, async (request, response, next) => {
   }
 })
 
-module.exports = blogRouter
+export default blogRouter

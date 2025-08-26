@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 
 export type BlogType = {
+  user: UserType | mongoose.Types.ObjectId
   id: string
   title: string
   author: string
