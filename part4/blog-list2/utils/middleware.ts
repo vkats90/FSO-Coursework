@@ -15,7 +15,6 @@ const requestLogger = (request: Request, response: Response, next: NextFunction)
 
 const userExtractor = (request: Request, response: Response, next: NextFunction) => {
   let auth = request.get('Authorization')
-  console.log('AUTH', auth)
   if (auth) {
     try {
       auth = auth.replace('Bearer ', '')
@@ -34,7 +33,7 @@ const unknownEndpoint = (_request: Request, response: Response) => {
 }
 
 const errorHandler = (error: any, _request: Request, response: Response, next: NextFunction) => {
-  logger.error(error.message)
+  logger.error(error)
 
   if (error.name === 'CastError') {
     response.status(400).send({ error: 'malformatted id' })
@@ -43,6 +42,7 @@ const errorHandler = (error: any, _request: Request, response: Response, next: N
   } else if (error.code == 11000) {
     response.status(400).json({ error: 'a User with this name already exists' })
   } else if (error.name == 'JsonWebTokenError') response.status(401).json({ error: 'Unauthorized' })
+  if (error.error && error.status) response.status(error.status).json(error)
 
   next(error)
 }

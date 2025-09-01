@@ -11,7 +11,7 @@ userRouter.get('/', async (req: Request, res: Response) => {
   res.json(users)
 })
 
-userRouter.post('/', async (req: Request, res: Response, next) => {
+userRouter.post('/', async (req: Request, res: Response) => {
   try {
     const input = req.body
     if (input.username.length < 3) {
