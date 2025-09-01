@@ -1,7 +1,6 @@
 import { Router, Request, Response } from 'express'
 import { User } from '../models/users'
 import bcrypt from 'bcrypt'
-import { error } from 'console'
 
 export const userRouter = Router()
 
@@ -33,4 +32,20 @@ userRouter.post('/', async (req: Request, res: Response) => {
       res.status(error.status).json({ error: error.message })
     }
   }
+})
+
+userRouter.put('/:id', async (req: Request, res: Response) => {
+  const input = req.body
+  if (!req.user || req.user.username != input.username) throw { status: 401, error: 'Unauthorized' }
+  if (input.username.length < 3) {
+    throw { status: 400, message: 'Username is too short' }
+  }
+  if (input.password.length < 3) {
+    throw { status: 400, message: 'Password is too short' }
+  }
+  const foundUser = await User.findById(req.params.id)
+  console.log(foundUser)
+  const user = await User.findByIdAndUpdate(req.params.id, { ...foundUser?.toJSON(), ...req.body })
+
+  res.json(user)
 })

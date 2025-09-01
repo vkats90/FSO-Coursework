@@ -33,7 +33,7 @@ const unknownEndpoint = (_request: Request, response: Response) => {
 }
 
 const errorHandler = (error: any, _request: Request, response: Response, next: NextFunction) => {
-  logger.error(error)
+  logger.error(error.name)
 
   if (error.name === 'CastError') {
     response.status(400).send({ error: 'malformatted id' })
@@ -42,7 +42,9 @@ const errorHandler = (error: any, _request: Request, response: Response, next: N
   } else if (error.code == 11000) {
     response.status(400).json({ error: 'a User with this name already exists' })
   } else if (error.name == 'JsonWebTokenError') response.status(401).json({ error: 'Unauthorized' })
-  if (error.error && error.status) response.status(error.status).json(error)
+  else if (error.name == 'TokenExpiredError')
+    response.status(401).json({ error: 'Token expired, re-log in' })
+  else if (error.error && error.status) response.status(error.status).json(error)
 
   next(error)
 }

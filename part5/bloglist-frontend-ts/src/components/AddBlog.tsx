@@ -1,10 +1,10 @@
 import blogService from '../../services/blogs'
-import { useAppData } from '../App'
+import { useAppData } from '../context/context'
 import { useState, type FormEvent } from 'react'
 import { type BlogType } from '../../types'
 
 const AddBlog = () => {
-  const { setBlogs, setNote } = useAppData()
+  const { setBlogs, setNote, setUser } = useAppData()
   const [expand, setExpand] = useState(false)
   const [newBlog, setNewBlog] = useState<BlogType | null>(null)
 
@@ -16,6 +16,10 @@ const AddBlog = () => {
       if (res.error) {
         setNewBlog(null)
         setExpand(!expand)
+        if (res.error == 'Token expired, re-log in') {
+          setUser(null)
+          window.sessionStorage.removeItem('user')
+        }
         return setNote(res)
       }
       setBlogs((prev) => prev.concat([res]))
@@ -37,9 +41,15 @@ const AddBlog = () => {
       )}
       {expand && (
         <form
-          className="flex flex-col my-4 gap-2 border-0 rounded-md w-fit p-4 bg-slate-100 items-end m-auto"
+          className="relative flex flex-col my-4 gap-2 border-0 rounded-md w-fit p-6 bg-slate-100 items-end m-auto"
           onSubmit={handleSubmit}
         >
+          <div
+            onClick={() => setExpand(!expand)}
+            className="absolute text-red-500 text-xl right-2 top-0 cursor-pointer"
+          >
+            x
+          </div>
           <label className="flex justify-between w-full">
             Title
             <input

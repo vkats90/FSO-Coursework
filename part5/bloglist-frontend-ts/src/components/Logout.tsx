@@ -1,4 +1,4 @@
-import { useAppData } from '../App'
+import { useAppData } from '../context/context'
 
 const LogOut = () => {
   const { setUser } = useAppData()

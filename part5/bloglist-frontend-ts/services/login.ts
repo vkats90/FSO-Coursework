@@ -7,8 +7,9 @@ const login = async (username: string, password: string) => {
     const res = await axios.post(baseURL, { username, password })
     window.sessionStorage.setItem('user', JSON.stringify(res.data))
     return res.data
-  } catch (err: any) {
-    return err.response.data
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err) && err.response) return err.response.data
+    throw err
   }
 }
 

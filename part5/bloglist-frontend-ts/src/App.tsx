@@ -1,20 +1,13 @@
-import { useState, useEffect, createContext, useContext } from 'react'
+import { useState, useEffect } from 'react'
+import { AppData } from './context/context'
 import BlogList from './components/BlogList'
 import LogOut from './components/Logout'
 import Login from './components/Login'
 import Notification from './components/Notification'
 import AddBlog from './components/AddBlog'
 import blogService from '../services/blogs'
-import type { BlogType, UserType, AppContextType, NoteType } from '../types'
+import type { BlogType, UserType, NoteType } from '../types'
 import './App.css'
-
-export const AppData = createContext<AppContextType | null>(null)
-
-export const useAppData = () => {
-  const context = useContext(AppData)
-  if (!context) throw new Error('context is not defined')
-  return context
-}
 
 function App() {
   const [blogs, setBlogs] = useState<BlogType[]>([])

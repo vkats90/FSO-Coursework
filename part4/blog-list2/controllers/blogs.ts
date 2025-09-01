@@ -31,7 +31,7 @@ blogRouter.delete(
     const id = request.params.id.toString()
     const blog: any = await Blog.findById(id).populate('user')
     if (!blog) throw { status: 400, error: "A blog with this ID doesn't exist" }
-    else if (blog.user.username !== request.user.username) {
+    else if (blog.user.username != request.user.username) {
       throw { status: 401, error: 'Unauthorized' }
     } else {
       await blog.deleteOne()
