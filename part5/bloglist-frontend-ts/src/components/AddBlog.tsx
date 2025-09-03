@@ -13,7 +13,7 @@ const AddBlog = () => {
     ;(async () => {
       if (!newBlog) throw new Error("Can't submit empty fields")
       const res = await blogService.addBlog(newBlog)
-      if (res.error) {
+      if (res && res.error) {
         setNewBlog(null)
         setExpand(!expand)
         if (res.error == 'Token expired, re-log in') {
