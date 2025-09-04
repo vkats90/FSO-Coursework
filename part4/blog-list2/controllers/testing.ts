@@ -7,4 +7,6 @@ export const testingRouter = Router()
 testingRouter.post('/', async (req: Request, res: Response) => {
   await User.deleteMany({})
   await Blog.deleteMany({})
+
+  res.status(204).end()
 })
