@@ -5,6 +5,7 @@ import cors from 'cors'
 import { blogRouter } from './controllers/blogs'
 import { userRouter } from './controllers/users'
 import { loginRouter } from './controllers/login'
+import { testingRouter } from './controllers/testing'
 import middleware from './utils/middleware'
 import logger from './utils/logger'
 
@@ -29,6 +30,8 @@ app.use(cors())
 app.use('/api/blogs', blogRouter)
 app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
+process.env.NODE_ENV == 'test' && app.use('/api/reset', testingRouter)
+
 app.use(middleware.errorHandler)
 app.use(middleware.unknownEndpoint)
 
