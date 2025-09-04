@@ -26,7 +26,7 @@ function App() {
   return (
     <AppData.Provider value={{ user, setUser, blogs, setBlogs, note, setNote }}>
       {note && <Notification note={note} />}
-      <LogOut />
+      {user && <LogOut />}
       {user && <div className="m-4 absolute top-0 right-20">Welcome {user.name}</div>}
       <div className="w-full py-10 flex flex-col text-center ">
         <div className="my-8 text-4xl">Blog List App TypeScript</div>
