@@ -28,7 +28,10 @@ const BlogComponent = ({ blog }: { blog: BlogType }) => {
   }
 
   return (
-    <div className="relative border-0 my-2 flex justify-start rounded-sm p-2 md:w-[400px] w-[95%] bg-white hover:bg-slate-200">
+    <div
+      data-testid="blog-component"
+      className="relative border-0 my-2 flex justify-start rounded-sm p-2 md:w-[400px] w-[95%] bg-white hover:bg-slate-200"
+    >
       {!expand && (
         <div className="cursor-pointer" onClick={() => setExpand(!expand)}>
           <b> {blog.title} </b>
@@ -37,12 +40,12 @@ const BlogComponent = ({ blog }: { blog: BlogType }) => {
       )}
       {expand && (
         <div className="p-2 text-left">
-          <div
+          <button
             onClick={() => setExpand(!expand)}
             className="absolute text-red-500 text-xl right-2 top-0 cursor-pointer"
           >
             x
-          </div>
+          </button>
           <div className="font-bold text-xl m-auto">{blog.title}</div>
           <div>
             {' '}

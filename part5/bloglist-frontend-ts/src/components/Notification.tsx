@@ -18,17 +18,16 @@ const Notification = ({ note }: { note: NoteType }) => {
     }
   }, [note])
 
-  return (
-    <div className="w-full fixed top-0 h-20 z-50">
-      {color && (
+  if (color)
+    return (
+      <div className="w-full fixed top-0 h-20 z-30">
         <div
           className={` ${color} px-4 py-2 my-4 w-[400px] max-w-[90vw] text-center rounded-lg mx-auto shadow-md`}
         >
           {note.message ? note.message : note.error}
         </div>
-      )}
-    </div>
-  )
+      </div>
+    )
 }
 
 export default Notification

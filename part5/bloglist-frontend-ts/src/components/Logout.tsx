@@ -10,7 +10,7 @@ const LogOut = () => {
   return (
     <button
       onClick={handleLogOut}
-      className="absolute border-0 rounded-md p-2 bg-slate-200 cursor-pointer m-2 top-0 right-0"
+      className="absolute border-0 rounded-md p-2 bg-slate-200 cursor-pointer m-2 top-0 right-0 z-40"
     >
       Log Out
     </button>

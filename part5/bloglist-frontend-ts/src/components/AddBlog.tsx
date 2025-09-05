@@ -4,7 +4,7 @@ import { useState, type FormEvent } from 'react'
 import { type BlogType } from '../../types'
 
 const AddBlog = () => {
-  const { setBlogs, setNote, setUser } = useAppData()
+  const { setBlogs, setNote, setUser, user } = useAppData()
   const [expand, setExpand] = useState(false)
   const [newBlog, setNewBlog] = useState<BlogType | null>(null)
 
@@ -22,7 +22,7 @@ const AddBlog = () => {
         }
         return setNote(res)
       }
-      setBlogs((prev) => prev.concat([res]))
+      setBlogs((prev) => prev.concat([{ ...res, user: user }]))
       setNewBlog(null)
       setExpand(!expand)
     })()
@@ -69,7 +69,7 @@ const AddBlog = () => {
             />
           </label>
           <label className="flex justify-between w-full">
-            Url
+            URL
             <input
               className="bg-white rounded-sm ml-2"
               value={newBlog?.url}
