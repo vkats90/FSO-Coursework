@@ -20,6 +20,8 @@ const errorHandler = (error: any, _request: Request, response: Response, next: N
 
   if (error.name === 'CastError') {
     response.status(400).send({ error: 'malformatted id' })
+  } else if (error.message?.includes('invalid input')) {
+    response.status(400).json({ error: 'One of the fields has a invalid type' })
   } else if (error.error && error.status) response.status(error.status).json(error)
 
   next(error)

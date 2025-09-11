@@ -1,38 +1,36 @@
 import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../dbConnection'
-import { User } from './users'
+import { Blog } from './blogs'
 
-export class Blog extends Model {}
+export class User extends Model {
+  passwordHash: any
+}
 
-Blog.init(
+User.init(
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    title: {
+    username: {
+      unique: true,
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    author: {
+    name: {
       type: DataTypes.TEXT,
     },
-    url: {
+    passwordHash: {
       type: DataTypes.TEXT,
       allowNull: false,
-    },
-    likes: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
     },
   },
   {
     sequelize,
     underscored: true,
-    timestamps: false,
-    modelName: 'blog',
+    modelName: 'user',
   }
 )
 
-Blog.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+User.hasMany(Blog, { foreignKey: 'userId', as: 'blogs' })

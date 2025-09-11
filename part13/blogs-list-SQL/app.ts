@@ -3,11 +3,8 @@ import 'dotenv/config'
 import cors from 'cors'
 import middleware from './utils/middleware'
 import { blogRouter } from './controllers/blogs'
-import { dbConnect } from './dbConnection'
 
 const app = express()
-
-dbConnect()
 
 app.use(express.json())
 process.env.NODE_ENV != 'test' && app.use(middleware.requestLogger)
