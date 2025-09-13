@@ -40,5 +40,10 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true
-  }
+  },
+  "include": [
+    "./**/*.ts", // include all TS files in root and subfolders
+    "./types.d.ts" // explicitly include your custom types
+  ],
+  "files": ["./types.d.ts"] // 👈 force load this file
 }

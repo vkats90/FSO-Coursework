@@ -1,5 +1,6 @@
 import logger from './logger'
 import { Request, Response, NextFunction } from 'express'
+import jwt from 'jsonwebtoken'
 
 const SECRET: string = process.env.SECRET ? process.env.SECRET : ''
 
@@ -11,12 +12,20 @@ const requestLogger = (request: Request, response: Response, next: NextFunction)
   next()
 }
 
+const userExtractor = async (req: Request, res: Response, next: NextFunction) => {
+  const token = req.get('Authorization')?.replace('Bearer ', '')
+  const user = jwt.verify(token ? token : '', process.env.SECRET as string)
+  if (user && typeof user == 'object') req.user = { username: user.username, id: user.id }
+
+  next()
+}
+
 const unknownEndpoint = (_request: Request, response: Response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
 const errorHandler = (error: any, _request: Request, response: Response, next: NextFunction) => {
-  logger.error(error.name)
+  logger.error(error)
 
   if (error.name === 'CastError') {
     response.status(400).send({ error: 'malformatted id' })
@@ -28,6 +37,7 @@ const errorHandler = (error: any, _request: Request, response: Response, next: N
 }
 
 export default {
+  userExtractor,
   requestLogger,
   unknownEndpoint,
   errorHandler,

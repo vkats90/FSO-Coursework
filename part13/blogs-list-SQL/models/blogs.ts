@@ -34,5 +34,3 @@ Blog.init(
     modelName: 'blog',
   }
 )
-
-Blog.belongsTo(User, { foreignKey: 'userId', as: 'user' })

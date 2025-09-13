@@ -32,5 +32,3 @@ User.init(
     modelName: 'user',
   }
 )
-
-User.hasMany(Blog, { foreignKey: 'userId', as: 'blogs' })
