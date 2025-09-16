@@ -1,15 +1,25 @@
 import { Router, Request, Response } from 'express'
 import models from '../models'
 import middleware from '../utils/middleware'
-import logger from '../utils/logger'
+import { Op } from 'sequelize'
+import { title } from 'process'
 
 export const blogRouter = Router()
 
 blogRouter.get('/', async (req: Request, res: Response) => {
+  const search = req.query.search
+  let where: any = {}
+  if (search) {
+    where = {
+      [Op.or]: [{ title: { [Op.substring]: search } }, { author: { [Op.substring]: search } }],
+    }
+  }
   const blogs = await models.Blog.findAll({
     include: {
       model: models.User,
     },
+    where,
+    order: [['likes', 'DESC']],
   })
   res.status(200).json(blogs)
 })

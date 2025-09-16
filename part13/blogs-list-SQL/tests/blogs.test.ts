@@ -27,24 +27,28 @@ beforeAll(async () => {
     title: 'Bogus Title 2',
     author: 'Fake Author 2',
     url: 'http://bogusurl2.com',
+    likes: 2,
   })
 
   await api.post('/api/blogs').set('Authorization', token).send({
     title: 'Bogus Title 3',
     author: 'Fake Author 3',
     url: 'http://bogusurl3.com',
+    likes: 5,
   })
 })
 
 describe('testing the GET functionality', () => {
-  test('making a request displays the single created user', async () => {
+  test('making a request displays the 3 blogs and they are orderes', async () => {
     const res = await api.get('/api/blogs')
 
     expect(res.body.length).toBe(3)
-    expect(res.body[0].title).toBe('Bogus Title 1')
+    expect(res.body[0].title).toBe('Bogus Title 3')
+    expect(res.body[0].likes).toBe(5)
+    expect(res.body[1].title).toBe('Bogus Title 2')
   })
 
-  test('making a GET request displays the user the user that owns the blogs', async () => {
+  test('making a GET request displays the user that owns the blogs', async () => {
     const res = await api.get('/api/blogs')
 
     expect(res.body[0].user.username).toBe('placeholder@gmail.com')
@@ -52,6 +56,23 @@ describe('testing the GET functionality', () => {
       .map((a: any) => a.user.username)
       .filter((a: any) => a == 'placeholder@gmail.com')
     expect(usernames.length).toBe(3)
+  })
+
+  test('making a request with a search query displays only the blogs with the search item in the title field', async () => {
+    const res = await api.get('/api/blogs?search=Bogus Title 3')
+
+    expect(res.body.length).toBe(1)
+    expect(res.body[0].title).toBe('Bogus Title 3')
+    expect(res.body[0].likes).toBe(5)
+  })
+
+  test('making a request with a search query displays only the blogs with the search item in the title or author fields', async () => {
+    const res = await api.get('/api/blogs?search=3')
+
+    expect(res.body.length).toBe(1)
+    expect(res.body[0].title).toBe('Bogus Title 3')
+    expect(res.body[0].author).toBe('Fake Author 3')
+    expect(res.body[0].likes).toBe(5)
   })
 })
 
