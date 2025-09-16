@@ -1,6 +1,5 @@
 import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../dbConnection'
-import { Blog } from './blogs'
 
 export class User extends Model {
   passwordHash: any
@@ -17,6 +16,9 @@ User.init(
       unique: true,
       type: DataTypes.TEXT,
       allowNull: false,
+      validate: {
+        isEmail: true,
+      },
     },
     name: {
       type: DataTypes.TEXT,

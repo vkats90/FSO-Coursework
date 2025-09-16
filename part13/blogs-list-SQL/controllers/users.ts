@@ -18,6 +18,14 @@ userRouter.post('/', async (req: Request, res: Response) => {
   const input = req.body
   if (!input.username || !input.password)
     throw { status: 400, error: 'Missing required fields username or password' }
+  if (
+    !String(input.username)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      )
+  )
+    throw { status: 400, error: 'Username must be an email' }
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(input.password, saltRounds)
   const user = models.User.build({ username: input.username, name: input.name, passwordHash })

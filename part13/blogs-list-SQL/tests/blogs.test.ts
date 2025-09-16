@@ -10,8 +10,12 @@ let blogID: string = ''
 beforeAll(async () => {
   await models.Blog.truncate({ cascade: true, restartIdentity: true })
   await models.User.truncate({ cascade: true, restartIdentity: true })
-  await api.post('/api/users').send({ username: 'placeholder', name: 'bot', password: 'password1' })
-  const res = await api.post('/api/login').send({ username: 'placeholder', password: 'password1' })
+  await api
+    .post('/api/users')
+    .send({ username: 'placeholder@gmail.com', name: 'bot', password: 'password1' })
+  const res = await api
+    .post('/api/login')
+    .send({ username: 'placeholder@gmail.com', password: 'password1' })
   token = 'Bearer ' + res.body.token
   await api.post('/api/blogs').set('Authorization', token).send({
     title: 'Bogus Title 1',
@@ -38,7 +42,16 @@ describe('testing the GET functionality', () => {
 
     expect(res.body.length).toBe(3)
     expect(res.body[0].title).toBe('Bogus Title 1')
-    expect(res.body[0].user.username).toBe('placeholder')
+  })
+
+  test('making a GET request displays the user the user that owns the blogs', async () => {
+    const res = await api.get('/api/blogs')
+
+    expect(res.body[0].user.username).toBe('placeholder@gmail.com')
+    const usernames = res.body
+      .map((a: any) => a.user.username)
+      .filter((a: any) => a == 'placeholder@gmail.com')
+    expect(usernames.length).toBe(3)
   })
 })
 
@@ -135,7 +148,7 @@ describe('testing the PUT functionality', () => {
     }
     await api
       .post('/api/users')
-      .send({ username: 'placeholder2', name: 'bot2', password: 'password12' })
+      .send({ username: 'placeholder2@gmail.com', name: 'bot2', password: 'password12' })
     const res = await models.Blog.create({
       title: 'Not my Blog',
       author: 'someoneElse',
