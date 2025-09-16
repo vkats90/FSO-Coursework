@@ -1,8 +1,9 @@
 import { Sequelize } from 'sequelize'
 import logger from './utils/logger'
+import 'dotenv/config'
 
 export const sequelize = new Sequelize(
-  process.env.NODE_ENV == 'test'
+  process.env.NODE_ENV != 'test'
     ? (process.env.POSTGRES_URL as string)
     : (process.env.TEST_POSTGRES_URL as string),
   {
@@ -12,6 +13,7 @@ export const sequelize = new Sequelize(
         rejectUnauthorized: false,
       },
     },
+    logging: process.env.NODE_ENV !== 'test',
   }
 )
 

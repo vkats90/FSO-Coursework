@@ -13,6 +13,7 @@ const requestLogger = (request: Request, response: Response, next: NextFunction)
 }
 
 const userExtractor = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.get('Authorization')) throw { status: 401, error: 'Unauthorized' }
   const token = req.get('Authorization')?.replace('Bearer ', '')
   const user = jwt.verify(token ? token : '', process.env.SECRET as string)
   if (user && typeof user == 'object') req.user = { username: user.username, id: user.id }
@@ -31,6 +32,8 @@ const errorHandler = (error: any, _request: Request, response: Response, next: N
     response.status(400).send({ error: 'malformatted id' })
   } else if (error.message?.includes('invalid input')) {
     response.status(400).json({ error: 'One of the fields has a invalid type' })
+  } else if (error.name?.includes('SequelizeUniqueConstraintError')) {
+    response.status(400).json({ error: 'Username must be unique' })
   } else if (error.error && error.status) response.status(error.status).json(error)
 
   next(error)

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express'
 import models from '../models'
 import middleware from '../utils/middleware'
+import logger from '../utils/logger'
 
 export const blogRouter = Router()
 
@@ -19,9 +20,16 @@ blogRouter.post('/', middleware.userExtractor, async (req: Request, res: Respons
   if (newBlog.likes == undefined) newBlog.likes = 0
   if (!newBlog.title || !newBlog.url)
     throw { status: 400, error: 'Missing required fields title or url' }
-  const blog = models.Blog.build({ ...newBlog, user: req.user.id })
-  const response = await blog.save({ validate: true, fields: ['title', 'url', 'likes', 'author'] })
-  res.status(200).json(response)
+  const blog = models.Blog.build({
+    ...newBlog,
+    user: req.user.id.toString(),
+    userId: req.user.id.toString(),
+  })
+  const response = await blog.save({
+    validate: true,
+    fields: ['title', 'url', 'likes', 'author', 'userId'],
+  })
+  res.status(201).json(response)
 })
 
 blogRouter.put('/:id', middleware.userExtractor, async (req: Request, res: Response) => {
@@ -38,7 +46,7 @@ blogRouter.put('/:id', middleware.userExtractor, async (req: Request, res: Respo
   await models.Blog.update(updatedBlog, {
     where: { id },
     validate: true,
-    fields: ['title', 'url', 'likes', 'author'],
+    fields: ['title', 'url', 'likes', 'author', 'userId'],
   })
   res.status(200).json(updatedBlog)
 })
@@ -51,6 +59,7 @@ blogRouter.delete('/:id', middleware.userExtractor, async (req: Request, res: Re
       model: models.User,
     },
   })
+
   if (!blog) throw { status: 400, error: "A blog with this ID doesn't exist" }
   if (blog.toJSON().user.id != req.user.id) throw { status: 401, error: 'Unauthorized' }
   await blog.destroy()

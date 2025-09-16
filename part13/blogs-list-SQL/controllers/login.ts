@@ -9,9 +9,9 @@ export const loginRouter = Router()
 
 loginRouter.post('/', async (req: Request, res: Response) => {
   const input = req.body
-  if (!input.usename || input.password) throw { status: 400, error: 'Missing username or password' }
-  const user = await models.User.findOne({ where: { username: input.usename } })
-  logger.info(user)
+  if (!input.username || !input.password)
+    throw { status: 400, error: 'Missing username or password' }
+  const user = await models.User.findOne({ where: { username: input.username } })
   if (!user) throw { status: 401, error: "User doesn't exist" }
   await bcrypt.compare(input.password, user.toJSON().passwordHash)
   const token = jwt.sign(
@@ -21,5 +21,12 @@ loginRouter.post('/', async (req: Request, res: Response) => {
       expiresIn: 60 * 60,
     }
   )
-  res.status(200).json({ token, username: user.toJSON().username, name: user.toJSON().name })
+  res
+    .status(200)
+    .json({
+      token,
+      username: user.toJSON().username,
+      name: user.toJSON().name,
+      id: user.toJSON().id,
+    })
 })

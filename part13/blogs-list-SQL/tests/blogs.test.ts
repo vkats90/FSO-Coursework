@@ -1,0 +1,187 @@
+import models from '../models'
+import supertest from 'supertest'
+import app from '../app'
+import { sequelize } from '../dbConnection'
+
+const api = supertest(app)
+let token: string = ''
+let blogID: string = ''
+
+beforeAll(async () => {
+  await models.Blog.truncate({ cascade: true, restartIdentity: true })
+  await models.User.truncate({ cascade: true, restartIdentity: true })
+  await api.post('/api/users').send({ username: 'placeholder', name: 'bot', password: 'password1' })
+  const res = await api.post('/api/login').send({ username: 'placeholder', password: 'password1' })
+  token = 'Bearer ' + res.body.token
+  await api.post('/api/blogs').set('Authorization', token).send({
+    title: 'Bogus Title 1',
+    author: 'Fake Author 1',
+    url: 'http://bogusurl1.com',
+  })
+
+  await api.post('/api/blogs').set('Authorization', token).send({
+    title: 'Bogus Title 2',
+    author: 'Fake Author 2',
+    url: 'http://bogusurl2.com',
+  })
+
+  await api.post('/api/blogs').set('Authorization', token).send({
+    title: 'Bogus Title 3',
+    author: 'Fake Author 3',
+    url: 'http://bogusurl3.com',
+  })
+})
+
+describe('testing the GET functionality', () => {
+  test('making a request displays the single created user', async () => {
+    const res = await api.get('/api/blogs')
+
+    expect(res.body.length).toBe(3)
+    expect(res.body[0].title).toBe('Bogus Title 1')
+    expect(res.body[0].user.username).toBe('placeholder')
+  })
+})
+
+describe('testing the POST functionality', () => {
+  test('make sure a blog can be created', async () => {
+    let blog = {
+      title: 'Bogus Title 4',
+      author: 'Fake Author 4',
+      url: 'http://bogusurl4.com',
+    }
+    const response = await api.post('/api/blogs').set('Authorization', token).send(blog).expect(201)
+    expect(response.body.title).toBe(blog.title)
+    expect(response.body.url).toBe(blog.url)
+
+    const res = await api.get('/api/blogs')
+    expect(res.body.length).toBe(4)
+    expect(res.body[3].title).toBe('Bogus Title 4')
+  })
+
+  test("make sure that you can't post a blog without a title or URL", async () => {
+    let blog = {
+      title: 'Bogus Title 4',
+      author: 'Fake Author 4',
+      url: 'http://bogusurl4.com',
+    }
+    const response = await api
+      .post('/api/blogs')
+      .set('Authorization', token)
+      .send({ ...blog, title: undefined })
+    expect(response.status).toBe(400)
+    expect(response.body.error).toBe('Missing required fields title or url')
+
+    const response1 = await api
+      .post('/api/blogs')
+      .set('Authorization', token)
+      .send({ ...blog, url: undefined })
+    expect(response1.status).toBe(400)
+    expect(response1.body.error).toBe('Missing required fields title or url')
+  })
+
+  test('make sure that you cannot submit a user without authorization token', async () => {
+    let blog = {
+      title: 'Bogus Title 4',
+      author: 'Fake Author 4',
+      url: 'http://bogusurl4.com',
+    }
+    const response = await api.post('/api/blogs').send(blog)
+    expect(response.status).toBe(401)
+    expect(response.body.error).toBe('Unauthorized')
+  })
+})
+
+describe('testing the PUT functionality', () => {
+  test('A blog can be modified', async () => {
+    let blog = {
+      likes: 56,
+    }
+    const response = await api
+      .put(`/api/blogs/1`)
+      .set('Authorization', token)
+      .send(blog)
+      .expect(200)
+    expect(response.body.title).toBe('Bogus Title 1')
+    expect(response.body.likes).toBe(56)
+
+    const res = await api.get('/api/blogs')
+    expect(res.body.length).toBe(4)
+    expect(res.body.find((a: any) => a.id == 1).likes).toBe(56)
+  })
+
+  test('trying to update a blog whithout a token fails', async () => {
+    let blog = {
+      likes: 56,
+    }
+    const response = await api.put(`/api/blogs/1`).send(blog).expect(401)
+    expect(response.body.error).toBe('Unauthorized')
+  })
+
+  test("trying to update a blog that doesn't exist doesn't work", async () => {
+    let blog = {
+      likes: 56,
+    }
+    const response = await api
+      .put(`/api/blogs/65014`)
+      .set('Authorization', token)
+      .send(blog)
+      .expect(400)
+    expect(response.body.error).toBe("A blog with this ID doesn't exist")
+  })
+
+  test('trying to update a blog that is not yours fails', async () => {
+    let blog = {
+      likes: 56,
+    }
+    await api
+      .post('/api/users')
+      .send({ username: 'placeholder2', name: 'bot2', password: 'password12' })
+    const res = await models.Blog.create({
+      title: 'Not my Blog',
+      author: 'someoneElse',
+      url: 'www.someoneelsesblog.com',
+      userId: '2',
+    })
+    blogID = res.toJSON().id
+    const response = await api
+      .put(`/api/blogs/${blogID}`)
+      .set('Authorization', token)
+      .send(blog)
+      .expect(401)
+
+    expect(response.body.error).toBe('Unauthorized')
+  })
+})
+
+describe('testing the Delete functionality', () => {
+  test('trying to delete a blog whithout a token fails', async () => {
+    const response = await api.delete(`/api/blogs/4`).expect(401)
+    expect(response.body.error).toBe('Unauthorized')
+  })
+
+  test("trying to delete a blog that doesn't exist doesn't work", async () => {
+    const response = await api.delete(`/api/blogs/65014`).set('Authorization', token).expect(400)
+    expect(response.body.error).toBe("A blog with this ID doesn't exist")
+  })
+
+  test('trying to delete a blog that is not yours, fails', async () => {
+    const response = await api
+      .delete(`/api/blogs/${blogID}`)
+      .set('Authorization', token)
+      .expect(401)
+    expect(response.body.error).toBe('Unauthorized')
+  })
+
+  test('deleting a blog works', async () => {
+    const res = await api.get('/api/blogs')
+    const blog = res.body[0]
+    await api.delete(`/api/blogs/${blog.id}`).set('Authorization', token).expect(204)
+    const response = await api.get('/api/blogs')
+    expect(response.body.length).toBe(4)
+    expect(response.body.filter((a: any) => a.title == blog.title).length).toBe(0)
+  })
+})
+
+afterAll(async () => {
+  await sequelize.close()
+})

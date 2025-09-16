@@ -22,7 +22,7 @@ userRouter.post('/', async (req: Request, res: Response) => {
   const passwordHash = await bcrypt.hash(input.password, saltRounds)
   const user = models.User.build({ username: input.username, name: input.name, passwordHash })
   const response = await user.save({ validate: true, fields: ['username', 'name', 'passwordHash'] })
-  res.status(200).json(response)
+  res.status(201).json(response)
 })
 
 userRouter.put('/:id', middleware.userExtractor, async (req: Request, res: Response) => {
