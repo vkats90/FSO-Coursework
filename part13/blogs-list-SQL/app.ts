@@ -5,6 +5,7 @@ import middleware from './utils/middleware'
 import { blogRouter } from './controllers/blogs'
 import { userRouter } from './controllers/users'
 import { loginRouter } from './controllers/login'
+import { authorRouter } from './controllers/authors'
 
 const app = express()
 
@@ -15,6 +16,7 @@ app.use(cors())
 app.use('/api/blogs', blogRouter)
 app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
+app.use('/api/authors', authorRouter)
 
 app.use(middleware.errorHandler)
 app.use(middleware.unknownEndpoint)

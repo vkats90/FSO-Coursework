@@ -2,7 +2,6 @@ import { Router, Request, Response } from 'express'
 import models from '../models'
 import middleware from '../utils/middleware'
 import { Op } from 'sequelize'
-import { title } from 'process'
 
 export const blogRouter = Router()
 
