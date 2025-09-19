@@ -7,7 +7,9 @@
     "dev": "NODE_ENV=development nodemon index.ts",
     "build": "NODE_ENV=production npm i && tsc",
     "lint": "npx eslint .",
-    "start:test": "NODE_ENV=test nodemon index.ts"
+    "start:test": "NODE_ENV=test nodemon index.ts",
+    "migration:down": "tsx utils/migration_rollback.ts",
+    "migration:up": "tsx utils/migration_run.ts"
   },
   "keywords": [],
   "author": "",
@@ -39,6 +41,7 @@
     "cors": "^2.8.5",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.3",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "umzug": "^3.8.2"
   }
 }

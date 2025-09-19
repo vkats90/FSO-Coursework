@@ -38,7 +38,7 @@ beforeAll(async () => {
   })
 })
 
-describe('testing the GET functionality', () => {
+describe.only('testing the GET functionality', () => {
   test('making a request displays the 3 blogs and they are orderes', async () => {
     const res = await api.get('/api/blogs')
 

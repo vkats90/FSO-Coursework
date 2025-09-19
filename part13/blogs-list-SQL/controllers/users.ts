@@ -29,7 +29,10 @@ userRouter.post('/', async (req: Request, res: Response) => {
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(input.password, saltRounds)
   const user = models.User.build({ username: input.username, name: input.name, passwordHash })
-  const response = await user.save({ validate: true, fields: ['username', 'name', 'passwordHash'] })
+  const response = await user.save({
+    validate: true,
+    fields: ['username', 'name', 'password_hash'],
+  })
   res.status(201).json(response)
 })
 
