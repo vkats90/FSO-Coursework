@@ -23,11 +23,11 @@ module.exports = {
         type: DataTypes.INTEGER,
         defaultValue: 0,
       },
-      createdAt: {
+      created_at: {
         type: DataTypes.DATE,
         allowNull: false,
       },
-      updatedAt: {
+      updated_at: {
         type: DataTypes.DATE,
         allowNull: false,
       },
@@ -49,15 +49,15 @@ module.exports = {
       name: {
         type: DataTypes.TEXT,
       },
-      passwordHash: {
+      password_hash: {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      createdAt: {
+      created_at: {
         type: DataTypes.DATE,
         allowNull: false,
       },
-      updatedAt: {
+      updated_at: {
         type: DataTypes.DATE,
         allowNull: false,
       },

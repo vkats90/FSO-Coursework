@@ -13,7 +13,7 @@ beforeAll(async () => {
     .send({ username: 'placeholder@gmail.com', name: 'bot', password: 'password1' })
 })
 
-describe.only('testing the GET functionality', () => {
+describe('testing the GET functionality', () => {
   test('making a request displays the single created user', async () => {
     const res = await api.get('/api/users')
 

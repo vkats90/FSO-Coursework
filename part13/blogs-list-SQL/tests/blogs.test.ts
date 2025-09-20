@@ -38,7 +38,7 @@ beforeAll(async () => {
   })
 })
 
-describe.only('testing the GET functionality', () => {
+describe('testing the GET functionality', () => {
   test('making a request displays the 3 blogs and they are orderes', async () => {
     const res = await api.get('/api/blogs')
 
@@ -104,6 +104,25 @@ describe('testing the POST functionality', () => {
       .send({ ...blog, title: undefined })
     expect(response.status).toBe(400)
     expect(response.body.error).toBe('Missing required fields title or url')
+
+    const response1 = await api
+      .post('/api/blogs')
+      .set('Authorization', token)
+      .send({ ...blog, url: undefined })
+    expect(response1.status).toBe(400)
+    expect(response1.body.error).toBe('Missing required fields title or url')
+  })
+
+  test("make sure that you can't submit a post with a year earlier than 1992", async () => {
+    let blog = {
+      title: 'Bogus Title 4',
+      author: 'Fake Author 4',
+      url: 'http://bogusurl4.com',
+      year: 1990,
+    }
+    const response = await api.post('/api/blogs').set('Authorization', token).send(blog)
+    expect(response.status).toBe(400)
+    expect(response.body.error).toBe('The year must be between 1992 and this year')
 
     const response1 = await api
       .post('/api/blogs')
