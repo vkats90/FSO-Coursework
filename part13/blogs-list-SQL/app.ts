@@ -6,6 +6,7 @@ import { blogRouter } from './controllers/blogs'
 import { userRouter } from './controllers/users'
 import { loginRouter } from './controllers/login'
 import { authorRouter } from './controllers/authors'
+import { readingsRouter } from './controllers/readinglist'
 
 const app = express()
 
@@ -17,6 +18,7 @@ app.use('/api/blogs', blogRouter)
 app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/authors', authorRouter)
+app.use('/api/readinglists', readingsRouter)
 
 app.use(middleware.errorHandler)
 app.use(middleware.unknownEndpoint)

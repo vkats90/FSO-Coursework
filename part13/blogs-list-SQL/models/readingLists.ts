@@ -16,10 +16,14 @@ ReadingLists.init(
       allowNull: false,
       references: { model: 'blog', key: 'id' },
     },
-    readingsId: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: 'readings', key: 'id' },
+      references: { model: 'user', key: 'id' },
+    },
+    read: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
     },
   },
   {

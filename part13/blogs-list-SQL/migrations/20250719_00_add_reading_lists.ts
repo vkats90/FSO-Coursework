@@ -2,7 +2,7 @@ import { DataTypes, QueryInterface } from 'sequelize'
 
 module.exports = {
   up: async ({ context: queryInterface }: { context: QueryInterface }) => {
-    await queryInterface.createTable('readings', {
+    await queryInterface.createTable('reading_lists', {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -13,32 +13,19 @@ module.exports = {
         allowNull: false,
         defaultValue: false,
       },
+      blog_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: { model: 'blogs', key: 'id' },
+      },
       user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: { model: 'users', key: 'id' },
       },
     })
-    await queryInterface.createTable('reading_lists', {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      blog_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: { model: 'blogs', key: 'id' },
-      },
-      readings_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: { model: 'readings', key: 'id' },
-      },
-    })
   },
   down: async ({ context: queryInterface }: { context: QueryInterface }) => {
-    await queryInterface.dropTable('readings', { cascade: true })
     await queryInterface.dropTable('reading_lists', { cascade: true })
   },
 }

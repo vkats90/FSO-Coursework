@@ -17,6 +17,7 @@ const runMigrations = async () => {
   console.log('Migrations up to date', {
     files: migrations.map((mig: MigrationMeta) => mig.name),
   })
+  await sequelize.close()
 }
 
 const rollBackMigration = async () => {
@@ -25,6 +26,7 @@ const rollBackMigration = async () => {
   console.log('Migrations rolled back', {
     files: migrations.map((mig: MigrationMeta) => mig.name),
   })
+  await sequelize.close()
 }
 
 export default { rollBackMigration, runMigrations }

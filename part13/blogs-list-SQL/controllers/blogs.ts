@@ -14,10 +14,38 @@ blogRouter.get('/', async (req: Request, res: Response) => {
     }
   }
   const blogs = await models.Blog.findAll({
-    include: {
-      model: models.User,
-    },
+    include: [
+      {
+        model: models.User,
+      },
+      {
+        model: models.User,
+        as: 'readBy',
+        through: {
+          attributes: [],
+        },
+      },
+    ],
     where,
+    order: [['likes', 'DESC']],
+  })
+  res.status(200).json(blogs)
+})
+
+blogRouter.get('/:id', async (req: Request, res: Response) => {
+  const blogs = await models.Blog.findByPk(req.params.id, {
+    include: [
+      {
+        model: models.User,
+      },
+      {
+        model: models.User,
+        as: 'readBy',
+        through: {
+          attributes: [],
+        },
+      },
+    ],
     order: [['likes', 'DESC']],
   })
   res.status(200).json(blogs)
@@ -29,11 +57,10 @@ blogRouter.post('/', middleware.userExtractor, async (req: Request, res: Respons
   if (newBlog.likes == undefined) newBlog.likes = 0
   if (!newBlog.title || !newBlog.url)
     throw { status: 400, error: 'Missing required fields title or url' }
-  if (newBlog && (newBlog.year < 1992 || newBlog.year > Number(new Date().getFullYear())))
+  if (newBlog && (newBlog.year < 1991 || newBlog.year > Number(new Date().getFullYear())))
     throw { status: 400, error: 'The year must be between 1992 and this year' }
   const blog = models.Blog.build({
     ...newBlog,
-    user: req.user.id.toString(),
     userId: req.user.id.toString(),
   })
   const response = await blog.save({

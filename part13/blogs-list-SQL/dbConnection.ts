@@ -1,6 +1,5 @@
 import { Sequelize } from 'sequelize'
 import logger from './utils/logger'
-import { initDB } from './initDB'
 import 'dotenv/config'
 
 const connectionString =
@@ -10,7 +9,7 @@ const connectionString =
 
 const dialectOptions: any = {}
 // Only enable SSL in production; local and test environments use unencrypted connections
-if (process.env.NODE_ENV === 'production') {
+/*if (process.env.NODE_ENV === 'production') {
   dialectOptions.ssl = {
     require: true,
     rejectUnauthorized: false,
@@ -18,7 +17,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   // Explicitly disable SSL for development and test
   dialectOptions.ssl = false
-}
+}*/
 
 export const sequelize = new Sequelize(connectionString, {
   dialectOptions,
@@ -29,7 +28,6 @@ export const sequelize = new Sequelize(connectionString, {
 export const dbConnect = async () => {
   try {
     await sequelize.authenticate()
-    if (process.env.NODE_ENV != 'production') initDB()
     logger.info('Connected to Postgres')
   } catch (error) {
     logger.error("Can't connect to Database", error)

@@ -7,9 +7,36 @@ export const userRouter = Router()
 
 userRouter.get('/', async (req: Request, res: Response) => {
   const users = await models.User.findAll({
-    include: {
-      model: models.Blog,
-    },
+    include: [
+      {
+        model: models.Blog,
+      },
+      {
+        model: models.Blog,
+        as: 'readings',
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+  })
+  res.status(200).json(users)
+})
+
+userRouter.get('/:id', async (req: Request, res: Response) => {
+  const users = await models.User.findByPk(req.params.id, {
+    include: [
+      {
+        model: models.Blog,
+      },
+      {
+        model: models.Blog,
+        as: 'readings',
+        through: {
+          attributes: [],
+        },
+      },
+    ],
   })
   res.status(200).json(users)
 })

@@ -2,7 +2,9 @@ import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../dbConnection'
 import { User } from './users'
 
-export class Blog extends Model {}
+export class Blog extends Model {
+  id: any
+}
 
 Blog.init(
   {

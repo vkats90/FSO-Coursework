@@ -1,15 +1,11 @@
 import { Blog } from './blogs'
 import { User } from './users'
-import { Readings } from './readings'
 import { ReadingLists } from './readingLists'
 
 User.hasMany(Blog)
 Blog.belongsTo(User)
 
-Readings.belongsToMany(Blog, { through: ReadingLists })
-Blog.belongsToMany(Readings, { through: ReadingLists })
+User.belongsToMany(Blog, { through: ReadingLists, as: 'readings' })
+Blog.belongsToMany(User, { through: ReadingLists, as: 'readBy' })
 
-User.hasOne(Readings)
-Readings.belongsTo(User)
-
-export default { Blog, User, Readings, ReadingLists }
+export default { Blog, User, ReadingLists }
