@@ -8,4 +8,6 @@ Blog.belongsTo(User)
 User.belongsToMany(Blog, { through: ReadingLists, as: 'readings' })
 Blog.belongsToMany(User, { through: ReadingLists, as: 'readBy' })
 
+Blog.hasOne(ReadingLists)
+
 export default { Blog, User, ReadingLists }

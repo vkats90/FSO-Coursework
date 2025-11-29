@@ -17,6 +17,7 @@ userRouter.get('/', async (req: Request, res: Response) => {
         through: {
           attributes: [],
         },
+        attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] },
       },
     ],
   })
@@ -35,6 +36,13 @@ userRouter.get('/:id', async (req: Request, res: Response) => {
         through: {
           attributes: [],
         },
+        attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: models.ReadingLists,
+            attributes: ['id', 'read'],
+          },
+        ],
       },
     ],
   })
