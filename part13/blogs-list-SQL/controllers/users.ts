@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express'
 import models from '../models'
 import bcrypt from 'bcrypt'
 import middleware from '../utils/middleware'
+import { Op } from 'sequelize'
 
 export const userRouter = Router()
 
@@ -25,6 +26,9 @@ userRouter.get('/', async (req: Request, res: Response) => {
 })
 
 userRouter.get('/:id', async (req: Request, res: Response) => {
+  const read = req.query.read
+  let where = {}
+  if (read) where = { read }
   const users = await models.User.findByPk(req.params.id, {
     include: [
       {
@@ -37,10 +41,12 @@ userRouter.get('/:id', async (req: Request, res: Response) => {
           attributes: [],
         },
         attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] },
+
         include: [
           {
             model: models.ReadingLists,
             attributes: ['id', 'read'],
+            where,
           },
         ],
       },

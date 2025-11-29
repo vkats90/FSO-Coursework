@@ -22,13 +22,16 @@ readingsRouter.post('/', middleware.userExtractor, async (req: Request, res: Res
 readingsRouter.put('/:id', middleware.userExtractor, async (req: Request, res: Response) => {
   const id = req.params.id
   const body = req.body
+
   if (!req.user) throw { status: 401, error: 'Unauthorized' }
   let reading = await models.ReadingLists.findByPk(id)
   if (!reading) throw { status: 400, error: "A list with this ID doesn't exist" }
+
   reading = reading.toJSON()
-  console.log(reading?.userId, req.user.id)
+
+  console.log((reading as ReadingLists).userId, req.user.id)
   if ((reading as ReadingLists).userId != req.user.id) throw { status: 401, error: 'Unauthorized' }
 
   const response = models.ReadingLists.update({ read: body.read }, { where: { id } })
-  res.sendStatus(201)
+  res.sendStatus(204)
 })
