@@ -2,7 +2,9 @@ import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../dbConnection'
 import { User } from './users'
 
-export class ReadingLists extends Model {}
+export class ReadingLists extends Model {
+  userId: any
+}
 
 ReadingLists.init(
   {
