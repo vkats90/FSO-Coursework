@@ -109,3 +109,7 @@ describe('testing the authors functionality', () => {
     expect(Number(res.body[2].likes)).toBeGreaterThan(Number(res.body[3].likes))
   })
 })
+
+afterAll(async () => {
+  await sequelize.close()
+})

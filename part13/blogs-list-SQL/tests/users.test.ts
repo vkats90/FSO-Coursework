@@ -203,7 +203,7 @@ describe('adding a blog to users', () => {
 
     expect(blog.username).toBe('testuser1@gmail.com')
     expect(blog.blogs.length).toBe(2)
-    expect(blog.blogs[0].title).toBe('Bogus Title 1')
+    expect(blog.blogs[0].title).toBe('Bogus Title 2')
   })
 })
 

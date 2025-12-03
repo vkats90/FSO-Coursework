@@ -29,7 +29,6 @@ readingsRouter.put('/:id', middleware.userExtractor, async (req: Request, res: R
 
   reading = reading.toJSON()
 
-  console.log((reading as ReadingLists).userId, req.user.id)
   if ((reading as ReadingLists).userId != req.user.id) throw { status: 401, error: 'Unauthorized' }
 
   const response = models.ReadingLists.update({ read: body.read }, { where: { id } })

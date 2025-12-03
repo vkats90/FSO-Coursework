@@ -2,6 +2,7 @@ import models from '../models'
 import supertest from 'supertest'
 import app from '../app'
 import { sequelize } from '../dbConnection'
+import type { Blog } from '../models/blogs'
 
 const api = supertest(app)
 let token: string = ''
@@ -89,7 +90,8 @@ describe('testing the POST functionality', () => {
 
     const res = await api.get('/api/blogs')
     expect(res.body.length).toBe(4)
-    expect(res.body[3].title).toBe('Bogus Title 4')
+    const search = res.body.find((x: Blog) => x.title == 'Bogus Title 4')
+    expect(search.title).toBe('Bogus Title 4')
   })
 
   test("make sure that you can't post a blog without a title or URL", async () => {

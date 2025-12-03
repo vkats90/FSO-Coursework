@@ -7,7 +7,7 @@ const PORT = process.env.PORT
 
 ;(async () => {
   await dbConnect()
-  if (process.env.NODE_ENV != 'production') await initDB()
+  if (process.env.NODE_ENV == 'development') await initDB()
   app.listen(PORT, () => {
     logger.info(`Server running on port ${PORT}`)
   })

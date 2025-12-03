@@ -69,7 +69,12 @@ userRouter.post('/', async (req: Request, res: Response) => {
     throw { status: 400, error: 'Username must be an email' }
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(input.password, saltRounds)
-  const user = models.User.build({ username: input.username, name: input.name, passwordHash })
+  const user = models.User.build({
+    username: input.username,
+    name: input.name,
+    passwordHash,
+    disabled: false,
+  })
   const response = await user.save({
     validate: true,
     fields: ['username', 'name', 'passwordHash', 'createdAt', 'updatedAt'],
@@ -105,6 +110,8 @@ userRouter.delete('/:id', middleware.userExtractor, async (req: Request, res: Re
   const user = await models.User.findByPk(id)
   if (!user) throw { status: 400, error: "A user with this ID doesn't exist" }
   if (user.toJSON().id != req.user.id) throw { status: 401, error: 'Unauthorized' }
+  const session = await models.activeSessions.findOne({ where: { userId: user.toJSON().id } })
+  await session?.destroy()
   await user.destroy()
   res.status(204).end()
 })
