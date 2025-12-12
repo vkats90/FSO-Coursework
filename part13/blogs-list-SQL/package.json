@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test jest --verbose --runInBand",
+    "test:e2e": "playwright test",
     "dev": "NODE_ENV=development nodemon index.ts",
     "build": "NODE_ENV=production npm i && tsc",
     "lint": "npx eslint .",
@@ -16,6 +17,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",

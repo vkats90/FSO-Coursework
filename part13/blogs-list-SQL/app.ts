@@ -14,6 +14,7 @@ app.use(express.json())
 process.env.NODE_ENV != 'test' && app.use(middleware.requestLogger)
 app.use(cors())
 
+app.use(express.static('frontend'))
 app.use('/api/blogs', blogRouter)
 app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)

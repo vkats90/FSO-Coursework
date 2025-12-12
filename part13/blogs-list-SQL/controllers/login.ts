@@ -22,10 +22,8 @@ loginRouter.post('/', async (req: Request, res: Response) => {
       expiresIn: 60 * 60,
     }
   )
-  const session = await models.activeSessions.findOne({ where: { userId: user.toJSON().id } })
-  if (session)
-    await models.activeSessions.update({ token }, { where: { userId: user.toJSON().id } })
-  else await models.activeSessions.create({ userId: user.toJSON().id, token })
+  const session = await models.activeSessions.destroy({ where: { userId: user.toJSON().id } })
+  await models.activeSessions.create({ userId: user.toJSON().id, token })
 
   res.status(200).json({
     token,
