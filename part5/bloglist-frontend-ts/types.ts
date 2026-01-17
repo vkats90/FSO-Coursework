@@ -3,6 +3,7 @@ export interface BlogType {
   title: string
   author: string
   url: string
+  year: number
   likes: number
   user?: UserType
 }

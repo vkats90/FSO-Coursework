@@ -21,7 +21,7 @@ const BlogComponent = ({ blog }: { blog: BlogType }) => {
       setBlogs((prev) =>
         prev
           .map((b) => (b.id === blog.id ? { ...b, likes: b.likes + 1 } : b))
-          .sort((a: BlogType, b: BlogType) => b.likes - a.likes)
+          .sort((a: BlogType, b: BlogType) => b.likes - a.likes),
       )
       setNote({ message: `Liked blog "${blog.title}"` })
     })()
@@ -51,6 +51,11 @@ const BlogComponent = ({ blog }: { blog: BlogType }) => {
             {' '}
             <b>Author: </b>
             {blog.author}
+          </div>
+          <div>
+            {' '}
+            <b>Year: </b>
+            {blog.year}
           </div>
           <div>
             {' '}
