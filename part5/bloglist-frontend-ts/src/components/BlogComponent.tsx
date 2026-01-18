@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAppData } from '../context/context'
 import type { BlogType } from '../../types'
 import blogService from '../../services/blogs'
+import ReadTag from './subComponents/ReadTag'
 
 const BlogComponent = ({ blog }: { blog: BlogType }) => {
   const [expand, setExpand] = useState(false)
@@ -46,7 +47,10 @@ const BlogComponent = ({ blog }: { blog: BlogType }) => {
           >
             x
           </button>
-          <div className="font-bold text-xl m-auto">{blog.title}</div>
+          <div className="flex font-bold text-xl m-auto">
+            {blog.title}
+            <ReadTag blog={blog} />
+          </div>
           <div>
             {' '}
             <b>Author: </b>
@@ -61,6 +65,10 @@ const BlogComponent = ({ blog }: { blog: BlogType }) => {
             {' '}
             <b>Url: </b>
             {blog.url}
+          </div>
+          <div>
+            {' '}
+            <b>Read by me? </b>
           </div>
           <div className="flex gap-2">
             {' '}

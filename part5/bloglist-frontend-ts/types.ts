@@ -6,6 +6,7 @@ export interface BlogType {
   year: number
   likes: number
   user?: UserType
+  readBy?: [BlogType]
 }
 
 export interface UserType {
@@ -13,7 +14,8 @@ export interface UserType {
   username: string
   name: string
   passwordHash: string
-  blogs?: [string]
+  blogs?: [BlogType]
+  readings?: [BlogType]
 }
 
 export type NoteType = {
